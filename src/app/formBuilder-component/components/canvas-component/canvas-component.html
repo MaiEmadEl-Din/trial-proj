@@ -1,0 +1,312 @@
+<div class="flex flex-1 h-[calc(100vh-4rem)] overflow-hidden">
+    <!-- Sidebar (palette) -->
+    <aside class="w-64 bg-white p-3 overflow-auto z-10 relative rounded-tr-2xl shadow-class">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+                <mat-icon svgIcon="esc-icons:columns-3-cog"></mat-icon>
+                <p class="font-bold text-sm">Form Editor</p>
+            </div>
+            <div class="bg-primary-100 font-medium text-primary-600 capitalize py-1 px-3 rounded-full">
+                {{ formData?.formType + ' page'}}
+            </div>
+        </div>
+
+
+        <!-- Tabs -->
+        <div class="flex mb-6">
+            <button class="relative flex-1 py-3 text-center font-medium transition-colors cursor-pointer"
+                [ngClass]="activeFormTab === 'basic' ? '!text-primary-600' : '!text-text-400'"
+                (click)="setActiveTab('basic')">
+                Basic
+                <span class="absolute bottom-0 left-0 w-full h-[1px] bg-primary-600 transition-opacity"
+                    [class.opacity-100]="activeFormTab === 'basic'"
+                    [class.opacity-0]="activeFormTab !== 'basic'"></span>
+            </button>
+
+            <button class="relative flex-1 py-3 text-center font-medium transition-colors cursor-pointer"
+                [ngClass]="activeFormTab === 'templates' ? '!text-primary-600' : '!text-text-400'"
+                (click)="setActiveTab('templates')">
+                Templates
+                <span class="absolute bottom-0 left-0 w-full h-[1px] bg-primary-600 transition-opacity"
+                    [class.opacity-100]="activeFormTab === 'templates'"
+                    [class.opacity-0]="activeFormTab !== 'templates'"></span>
+            </button>
+        </div>
+
+
+        <div class="mb-3">
+            <input type="text" placeholder="Search"
+                class="w-full px-3 py-2 rounded-md text-sm bg-text-50 placeholder:text-text-300" />
+        </div>
+
+        <!-- Tab Content -->
+        <div *ngIf="activeFormTab === 'basic'" class="space-y-4">
+            <div id="accordion-collapse">
+                <h2 id="accordion-collapse-heading-1">
+                    <button type="button" (click)="accordionOpen = !accordionOpen"
+                        class="flex items-center justify-between w-full p-3 font-medium rtl:text-right text-gray-700 rounded-t-xl gap-3">
+                        <span class="text-text-400 text-sm">Basic Inputs</span>
+                        <mat-icon class="transition-transform duration-300 !text-text-400 !w-4 !h-4 cursor-pointer"
+                            [class.rotate-180]="accordionOpen" svgIcon="mat_outline:keyboard_arrow_down"></mat-icon>
+                    </button>
+                </h2>
+
+                <div *ngIf="accordionOpen" id="accordion-collapse-body-1">
+                    <div cdkDropList #paletteList="cdkDropList" [cdkDropListData]="paletteItems"
+                        [cdkDropListConnectedTo]="[canvasList]" class="space-y-2">
+                        <div *ngFor="let p of paletteItems" cdkDrag [cdkDragData]="p"
+                            class="flex items-center gap-3 p-2 rounded-md cursor-grab hover:bg-slate-50">
+                            <mat-icon [svgIcon]="p.icon" class="!w-5 !h-5">
+                            </mat-icon>
+                            <div class="text-sm flex-1 cursor-pointer"
+                                (click)="addFromPalette(p); $event.stopPropagation()">
+                                {{ p.label }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="activeFormTab === 'templates'" class="text-gray-500 text-center py-6">
+            Coming soon...
+        </div>
+    </aside>
+
+    <!-- Canvas -->
+    <main class="flex-1 flex justify-center items-start p-8 overflow-auto">
+        <div class="w-3/4 min-h-[200px] bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+            <h3 class="text-xl text-primary-950 !font-bold border-b border-b-[#EBEBEB]">New Form</h3>
+            <div cdkDropList #canvasList="cdkDropList" [cdkDropListData]="canvasItems"
+                [cdkDropListConnectedTo]="[paletteList]" (cdkDropListDropped)="drop($event)"
+                class="min-h-[260px] flex flex-col items-center justify-center rounded-lg">
+                <ng-container *ngIf="canvasItems.length === 0; else itemsList">
+                    <div class="text-center text-gray-500">
+                        <mat-icon svgIcon="esc-icons:hugeicons_drag"></mat-icon>
+                        <div class="text-xl font-bold text-primary-950">Start building</div>
+                        <div class="text-base text-[#828282] mt-1">
+                            Drag components from the sidebar to get started
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-template #itemsList>
+                    <div class="w-full flex flex-col gap-3">
+                        <h2 class="!text-text-800 !font-bold !text-xl mb-3">
+                            {{ formData?.formName }}
+                        </h2>
+
+                        <div *ngFor="let it of canvasItems; let i = index" cdkDrag [cdkDragData]="it"
+                            class="!flex !items-center gap-2 px-5 py-2 cursor-move"
+                            [style.direction]="editingItem?.styles?.direction || 'ltr'">
+                            <!-- Content -->
+                            <div class="flex-1" (click)="selectItem(it, i, $event)">
+                                <ng-container [ngSwitch]="it.type">
+
+                                    <!-- Text Field -->
+                                    <div *ngSwitchCase="'text'" class="space-y-2">
+                                        <label class="block text-sm text-gray-700">
+                                            {{ it.label || 'Text Field' }}
+                                        </label>
+                                        <input type="text" [ngStyle]="mergeBaseAndHoverStyles(it)"
+                                            (mouseenter)="applyHover(it)" (mouseleave)="removeHover(it)"
+                                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md bg-slate-50 text-gray-700"
+                                            [placeholder]="it.props?.placeholder || 'Enter text...'"
+                                            [disabled]="!it.styles?.enabled" [required]="it.props?.required" />
+                                    </div>
+
+                                    <!-- Text Area -->
+                                    <div *ngSwitchCase="'textarea'">
+                                        <label class="block text-sm text-gray-700">
+                                            {{ it.label || 'Text Area' }}
+                                        </label>
+                                        <textarea [ngStyle]="it.styles"
+                                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md bg-slate-50 text-gray-700"
+                                            rows="3" [placeholder]="it.props?.placeholder || 'Enter description...'"
+                                            disabled></textarea>
+                                    </div>
+
+                                    <!-- Button -->
+                                    <div *ngSwitchCase="'button'">
+                                        <button [ngStyle]="it.styles"
+                                            class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-medium rounded-md"
+                                            disabled>
+                                            {{ it.props?.buttonText || it.label || 'Button' }}
+                                        </button>
+                                    </div>
+
+                                    <!-- Dropdown -->
+                                    <div *ngSwitchCase="'dropdown'" class="w-full">
+                                        <label class="block text-sm text-gray-700 mb-1">
+                                            {{ it.label || 'Dropdown' }}
+                                        </label>
+                                        <mat-form-field appearance="outline" class="w-full">
+                                            <ng-container *ngIf="it.props?.multiselect; else singleSelect">
+                                                <mat-select [ngStyle]="it.styles" multiple
+                                                    [required]="it.props?.required" [disabled]="true"
+                                                    [placeholder]="it.props?.placeholder || 'Select an option'">
+                                                    <mat-option *ngFor="let option of it.props?.options"
+                                                        [value]="option.label">
+                                                        {{ option.label }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </ng-container>
+
+                                            <ng-template #singleSelect>
+                                                <mat-select [ngStyle]="it.styles" [required]="it.props?.required"
+                                                    [disabled]="true"
+                                                    [placeholder]="it.props?.placeholder || 'Select an option'">
+                                                    <mat-option *ngFor="let option of it.props?.options"
+                                                        [value]="option.label">
+                                                        {{ option.label }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </ng-template>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <!-- Multiple Choice -->
+                                    <div *ngSwitchCase="'multiple-choice'">
+                                        <label class="block text-sm text-gray-700">
+                                            {{ it.label || 'Multiple Choice' }}
+                                        </label>
+                                        <div class="mt-2 space-y-1">
+                                            <div *ngFor="let opt of ['Option 1', 'Option 2']"
+                                                class="flex items-center gap-2">
+                                                <input type="checkbox" disabled />
+                                                <span class="text-gray-600 text-sm">{{ opt }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Radio Button -->
+                                    <div *ngSwitchCase="'radio'">
+                                        <label class="block text-sm text-gray-700">
+                                            {{ it.label || 'Radio Buttons' }}
+                                        </label>
+                                        <div class="mt-2 space-y-1">
+                                            <div *ngFor="let opt of ['Option 1', 'Option 2']"
+                                                class="flex items-center gap-2">
+                                                <input type="radio" name="{{it.label}}" disabled />
+                                                <span class="text-gray-600 text-sm">{{ opt }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Toggle -->
+                                    <div *ngSwitchCase="'toggle'" class="flex items-center gap-2">
+                                        <label class="text-sm text-gray-700">
+                                            {{ it.label || 'Toggle' }}
+                                        </label>
+                                        <input type="checkbox" class="toggle-checkbox" disabled />
+                                    </div>
+
+                                    <!-- Date & Time -->
+                                    <div *ngSwitchCase="'datetime'">
+                                        <label class="block text-sm text-gray-700">
+                                            {{ it.label || 'Date & Time' }}
+                                        </label>
+                                        <input type="datetime-local"
+                                            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md bg-slate-50 text-gray-700"
+                                            disabled />
+                                    </div>
+
+                                    <!-- File Upload -->
+                                    <div *ngSwitchCase="'file'">
+                                        <label class="block text-sm text-gray-700">
+                                            {{ it.label || 'File Upload' }}
+                                        </label>
+                                        <input type="file"
+                                            class="mt-1 w-full border border-gray-300 rounded-md bg-slate-50 text-gray-700"
+                                            disabled />
+                                    </div>
+
+                                    <!-- Helper Text -->
+                                    <div *ngSwitchCase="'helper'">
+                                        <p class="text-sm text-gray-500 italic">{{ it.label || 'Helper text goeshere.'
+                                            }}</p>
+                                    </div>
+
+                                    <!-- Terms & Conditions -->
+                                    <div *ngSwitchCase="'text-condition'">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" disabled />
+                                            <span class="text-sm text-gray-700">
+                                                {{ it.label || 'I accept the terms and conditions.' }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </ng-container>
+                            </div>
+
+                            <!-- Delete Button -->
+                            <button type="button" (click)="deleteItem(i, $event)" class="!mt-8">
+                                <mat-icon svgIcon="esc-icons:delete" class="!w-7 !h-7 cursor-pointer"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Properties panel (left overlay) -->
+    <aside *ngIf="editingItem"
+        class="fixed px-1.5 left-0 top-16 bottom-0 w-72 bg-white border-r border-gray-200 z-30 shadow-lg">
+        <div class="p-3 flex items-center gap-2 border-b">
+            <mat-icon (click)="editingItem = null" svgIcon="mat_outline:arrow_back"
+                class="!text-primary-500 cursor-pointer"></mat-icon>
+            <div class="text-sm text-gray-700 font-bold">{{ editingItem.type | titlecase }} Field</div>
+        </div>
+
+        <div class="flex items-center justify-center p-3 gap-2">
+            <button (click)="activeTab='setup'" [ngClass]="{ 'bg-primary-500 !text-white': activeTab==='setup' }"
+                class="px-3 py-2 rounded flex items-center justify-center gap-2 !text-text-400 w-full">
+                <mat-icon svgIcon="esc-icons:columns-3-cog"
+                    [ngClass]="{ '!text-white': activeTab==='setup' }"></mat-icon>
+                Setup</button>
+            <button (click)="activeTab='styles'" [ngClass]="{ 'bg-primary-500 !text-white': activeTab==='styles' }"
+                class="px-3 py-2 rounded flex items-center justify-center gap-2 !text-text-400 w-full">
+                <mat-icon svgIcon="esc-icons:palette" [ngClass]="{ '!text-white': activeTab==='styles' }"></mat-icon>
+                Styles</button>
+        </div>
+
+        <div class="p-3 overflow-auto h-[calc(100%-6rem)] flex flex-col">
+            <form class="flex-1">
+                <app-field-setup *ngIf="activeTab==='setup'" (itemUpdated)="onItemUpdated($event)"
+                    [item]="editingItem!"></app-field-setup>
+
+                <app-field-styles *ngIf="activeTab==='styles'" (styleUpdated)="onStyleChange($event)"
+                    [item]="editingItem!"></app-field-styles>
+            </form>
+            <div class="w-full flex justify-end gap-2 !my-8">
+                <button (click)="cancelEdit()" class="px-3 py-1 !bg-text-50 rounded-md cursor-pointer">Cancel</button>
+                <button (click)="saveEdit()"
+                    class="px-3 py-1 border rounded-md !bg-primary-500 !text-white cursor-pointer">Save</button>
+            </div>
+        </div>
+
+    </aside>
+</div>
+
+<!-- Bottom toolbar (moved here) -->
+<footer class="fixed bottom-4 left-64 right-6 flex items-center justify-between px-6 h-14">
+    <div class="flex gap-2">
+        <button class="px-3 py-1 border rounded-md">−</button>
+        <button class="px-3 py-1 border rounded-md">+</button>
+    </div>
+
+    <div class="flex items-center gap-3 bg-white border px-3 py-1 rounded-md">
+        Grid
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" />
+            <div class="w-9 h-5 bg-gray-200 rounded-full peer-checked:bg-sky-600 transition"></div>
+        </label>
+    </div>
+
+    <div>
+        <button class="px-3 py-1 border rounded-md">T</button>
+    </div>
+</footer>

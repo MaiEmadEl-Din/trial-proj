@@ -1,0 +1,36 @@
+<nav
+  class="mb-4 mt-2 text-base font-medium text-primary-500"
+  aria-label="Breadcrumb"
+>
+  <ol class="list-reset flex gap-2">
+    @for (item of breadcrumbs; track $index; let last = $last) {
+    <li class="flex items-center gap-2" *ngIf="item">
+      <ng-container *ngIf="item.url && !last">
+        <a
+          [routerLink]="item.url"
+          class="hover:underline hover:text-primary-500 flex items-center gap-2"
+        >
+        @if (item.icon) {
+          <mat-icon [svgIcon]="item.icon" class="!w-5 !h-5"></mat-icon>
+        }
+         {{ item?.label }}
+        </a>
+
+        <!-- <span class="">&gt;</span> -->
+        <mat-icon svgIcon="mat_outline:arrow_forward_ios" class="!text-gray-500 !w-5 !h-5"></mat-icon>
+      </ng-container>
+
+      <ng-container *ngIf="last || !item.url">
+        <span
+          class="font-medium text-primary-600 rounded-full flex items-center gap-2"
+          >
+          @if (item.icon) {
+          <mat-icon [svgIcon]="item.icon" class="!w-5 !h-5"></mat-icon>
+        }
+         {{ item.label }}</span
+        >
+      </ng-container>
+    </li>
+    }
+  </ol>
+</nav>

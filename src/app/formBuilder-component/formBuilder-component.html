@@ -1,0 +1,14 @@
+<div class="w-full p-10">
+    <div class="flex items-start justify-between gap-y-5 mb-13">
+        <h1 class="!text-primary-800 !font-bold text-lg mb-2">
+            {{ "Forms" }}
+        </h1>
+        <button class="!bg-primary-500 rounded-lg !text-white px-5 py-2 flex items-center gap-2 cursor-pointer"
+            (click)="onCreateForm()">
+            <span>Create New Form</span>
+            <mat-icon matPrefix svgIcon="esc-icons:plus"></mat-icon>
+        </button>
+    </div>
+
+    <app-forms-list></app-forms-list>
+</div>

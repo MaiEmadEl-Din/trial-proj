@@ -1,0 +1,17 @@
+@use "./tailwind.css";
+
+/* You can add global styles to this file, and also import other style files */
+
+*:not(input):not(textarea):not(select) {
+  font-family: 'Cairo', sans-serif !important;
+}
+
+
+.mat-form-field-outline {
+  border-color: #2563eb !important; /* primary-600 */
+}
+
+.mat-mdc-form-field-infix {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}

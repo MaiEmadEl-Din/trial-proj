@@ -1,0 +1,83 @@
+<div class="w-full">
+    <div class="flex items-center justify-between gap-4 border-b border-b-text-300">
+        <!-- Filter Tabs -->
+        <div class="flex items-center gap-3 -mb-2" *ngIf="hasFilter">
+            <button *ngFor="let tab of filterTabs" (click)="onFilterChange(tab)"
+                class="px-4 py-2 text-sm font-medium  cursor-pointer" [ngClass]="{
+                    'text-black border-b border-b-primary-600': activeFilter === tab,
+                    'bg-white text-text-400 border-gray-300': activeFilter !== tab
+                }">
+                {{ tab }}
+            </button>
+        </div>
+        <!-- actions -->
+        <div class="flex gap-4 mb-2 ml-auto">
+            @if (actions.length > 0) {
+            <div class="flex gap-2 items-center !flex-grow">
+                @for (action of actions; track $index) {
+                @switch (action?.buttonType) {
+                @case('Search') {
+                <div class="flex items-center gap-2">
+                    <!-- Search Input -->
+                    @if (showSearchBar) {
+                    <div #searchBarWrapper class="relative w-60 transition-all duration-500 ease-in-out" [ngClass]="{
+             'opacity-100': showSearchBar,
+             'opacity-0 w-0': !showSearchBar
+           }">
+                        <!-- Search Icon -->
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 !text-primary-600">
+                            <mat-icon svgIcon="mat_outline:search" class="!w-5 !h-5"></mat-icon>
+                        </span>
+
+                        <!-- Input -->
+                        <input type="text" placeholder="Search" [formControl]="searchInput"
+                            (keyup)="search($event, action.action)"
+                            class="w-full h-10 pl-10 pr-10 border !border-primary-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 !focus:border-primary-500" />
+
+                        <!-- Clear Icon -->
+                        @if (searchInput.value) {
+                        <button type="button" (click)="clearSearchInput($event, action.action)"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 !text-primary-600 hover:text-primary-800">
+                            <mat-icon svgIcon="mat_outline:clear" class="w-5 h-5 cursor-pointer"></mat-icon>
+                        </button>
+                        }
+                    </div>
+                    }
+
+                    <!-- Search Toggle Button -->
+                    @if (showIconSearch) {
+                    <button type="button" (click)="clickedSearchIcon($event)" [ngClass]="{
+          'opacity-100': showIconSearch,
+          'w-0 opacity-0': !showIconSearch
+        }" class="flex items-center justify-center cursor-pointer rounded-md transition-all duration-500 ease-in-out border !border-primary-600 p-2">
+                        <mat-icon svgIcon="mat_outline:search" class="!text-primary-600 !w-5 !h-5"></mat-icon>
+                    </button>
+                    }
+                </div>
+                }
+                @case('Export') {
+                <button class="!bg-primary-100 disabled:!bg-gray-100 !rounded-md" mat-icon-button
+                    (click)="action?.action()" [disabled]="action?.disabled">
+                    <div class="flex items-center justify-center gap-1">
+                        <mat-icon svgIcon="esc-icons:clipboard-copy" class="!w-6 !h-6" [ngClass]="{
+                                                    '!text-primary-600 !cursor-pointer': !action.disabled,
+                                                    '!text-gray-400 !cursor-not-allowed': action.disabled
+                                                }"></mat-icon>
+                    </div>
+                </button>
+                }
+                @default {}
+                }
+                }
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- table name and record info -->
+    <div class="w-full mt-3">
+        <div>
+            <ng-content select="[table]"></ng-content>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,101 @@
+<div class="w-[500px] overflow-hidden" [formGroup]="form">
+    <!-- Header -->
+    <div class="bg-primary-50 px-6 py-2 border-b border-gray-200">
+        <h2 class="text-center text-text-800 font-bold text-sm">
+            Create New Form
+        </h2>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 space-y-6">
+        <!-- Form Name -->
+        <div class="flex flex-col space-y-2">
+            <label class="text-text-800 font-medium text-sm">Form Name</label>
+            <input type="text" placeholder="Table" formControlName="formName"
+                class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none placeholder:text-text-400" />
+            <p *ngIf="form.controls['formName'].invalid && form.controls['formName'].touched"
+                class="text-red-500 text-xs mt-1">
+                Form name is required and must be unique.
+            </p>
+        </div>
+
+        <!-- Form Type -->
+        <div class="space-y-2">
+            <label class="text-text-800 font-medium text-sm">Form Type</label>
+            <div class="flex gap-3">
+                <button type="button" (click)="setFormType('one')" [ngClass]="{
+            'bg-primary-50 text-primary-600 !border !border-primary-600 cursor-pointer':
+              form.value.formType === 'one',
+            'bg-text-50 text-text-600 cursor-pointer':
+              form.value.formType !== 'one'
+          }" class="px-4 py-2 rounded-md text-sm font-medium transition">
+                    One Page
+                </button>
+                <button type="button" (click)="setFormType('multi')" [ngClass]="{
+            'bg-primary-50 text-primary-600 !border !border-primary-600 cursor-pointer':
+              form.value.formType === 'multi',
+            'bg-text-50 text-text-600 cursor-pointer':
+              form.value.formType !== 'multi'
+          }" class="px-4 py-2 rounded-md text-sm font-medium transition">
+                    Multi-Page
+                </button>
+            </div>
+        </div>
+
+        <!-- Stepper Configurations -->
+        <div *ngIf="form.value.formType === 'multi'" class="rounded-lg space-y-4">
+            <h3 class="text-gray-800 font-medium text-sm">
+                Stepper configurations
+            </h3>
+
+            <!-- Show Stepper Guide -->
+            <div class="flex items-center justify-between border border-gray-200 rounded-md px-4 py-4">
+                <span class="text-text-800 text-sm">Show stepper Guide</span>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" formControlName="showStepperGuide" class="sr-only peer" />
+                    <div class="relative w-10 h-5 bg-gray-300 peer-checked:bg-blue-600 rounded-full transition">
+                        <div
+                            class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5">
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Stepper Style -->
+            <div *ngIf="form.value.showStepperGuide" class="flex justify-between  items-center border border-gray-200 rounded-md px-4 py-2 space-y-2">
+                <label class="text-text-800 text-sm font-medium">Stepper Style</label>
+                <div class="flex gap-3">
+                    <button type="button" (click)="setStepperStyle('vertical')" [ngClass]="{
+              'bg-primary-50 text-primary-600 !border !border-primary-600 cursor-pointer':
+                form.value.stepperStyle === 'vertical',
+              'bg-text-50 text-text-600 cursor-pointer':
+                form.value.stepperStyle !== 'vertical'
+            }" class="px-4 py-2 rounded-md text-sm font-medium transition">
+                        Vertical
+                    </button>
+                    <button type="button" (click)="setStepperStyle('horizontal')" [ngClass]="{
+              'bg-primary-50 text-primary-600 !border !border-primary-600 cursor-pointer':
+                form.value.stepperStyle === 'horizontal',
+              'bg-text-50 text-text-600 cursor-pointer':
+                form.value.stepperStyle !== 'horizontal'
+            }" class="px-4 py-2 rounded-md text-sm font-medium transition">
+                        Horizontal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 bg-gray-50">
+        <button class="px-5 py-2 rounded-md text-sm font-medium bg-text-50 text-primary-950 hover:bg-gray-200 cursor-pointer"
+            (click)="onCancel()">
+            Cancel
+        </button>
+        <button
+            class="px-5 py-2 rounded-md text-sm font-medium bg-primary-500 text-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            (click)="onCreate()" [disabled]="form.invalid">
+            Create
+        </button>
+    </div>
+</div>

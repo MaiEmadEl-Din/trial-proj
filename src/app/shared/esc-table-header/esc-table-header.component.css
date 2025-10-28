@@ -1,0 +1,6 @@
+::ng-deep .ag-header-row.ag-header-row-column {
+  @apply bg-gray-500 text-white;
+}
+::ng-deep .ag-header-row.ag-header-row-column :hover {
+  @apply bg-red-500;
+}/*# sourceMappingURL=esc-table-header.component.css.map */

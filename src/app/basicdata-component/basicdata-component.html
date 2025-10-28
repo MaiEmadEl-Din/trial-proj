@@ -1,0 +1,20 @@
+<div class="w-full p-10">
+    <div class="flex items-start justify-between gap-y-5">
+        <div class="flex flex-col">
+            <h1 class="!text-primary-800 !font-bold text-lg mb-2">
+                {{ "Lookups" }}
+            </h1>
+            <bread-crumb [breadcrumbs]="[
+          { url: '/', icon: 'esc-icons:home' },
+          { label: 'Lookups', url: '/lookups', icon: 'esc-icons:list-ordered' },
+        ]"></bread-crumb>
+        </div>
+        <button class="!bg-primary-500 rounded-lg !text-white px-5 py-2 flex items-center gap-2 cursor-pointer"
+            (click)="onAddLookup()">
+            <span>Create New</span>
+            <mat-icon matPrefix svgIcon="esc-icons:plus"></mat-icon>
+        </button>
+    </div>
+
+    <app-basicdata-list></app-basicdata-list>
+</div>

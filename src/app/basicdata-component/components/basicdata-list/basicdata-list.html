@@ -1,0 +1,10 @@
+<div class="w-full">
+    <esc-table-header [actions]="actions" [gridApi]="gridApi" [startPage]="advancedPaginatedService.meta$.number"
+        [recordPerPage]="advancedPaginatedService.meta$.size" [hasFilter]="true">
+        <ag-grid-angular table style="width:100%; height:50vh"
+            (bodyScrollEnd)="advancedPaginatedService.onScroll($event)" (gridReady)="onGridReady($event)"
+            [theme]="theme" [rowData]="rowData" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef"
+            (sortChanged)="advancedPaginatedService.onSortChanged($event)" [rowHeight]="40"
+            [suppressDragLeaveHidesColumns]="true" />
+    </esc-table-header>
+</div>

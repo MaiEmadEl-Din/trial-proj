@@ -1,0 +1,144 @@
+@import "tailwindcss";
+@theme {
+  /* Colors */
+  --color-primary-50: #ECF6FE;
+  --color-primary-100: #CAE1F4;
+  --color-primary-200: #8AB7DC;
+  --color-primary-300: #63A0D1;
+  --color-primary-400: #3C88C5;
+  --color-primary-500: #1570BA;
+  --color-primary-600: #125D9B;
+  --color-primary-700: #0E4B7C;
+  --color-primary-800: #07253E;
+  --color-primary-900: #041625;
+  --color-primary-950: #081209;
+  --color-secondary-50: #FAF5EA;
+  --color-secondary-100: #F5EBD6;
+  --color-secondary-200: #ECD8AC;
+  --color-secondary-300: #E2C483;
+  --color-secondary-400: #D8B05A;
+  --color-secondary-500: #D4A849;
+  --color-secondary-600: #A57D27;
+  --color-secondary-700: #7C5E1D;
+  --color-secondary-800: #533F13;
+  --color-secondary-900: #291F0A;
+  --color-secondary-950: #151005;
+  --color-third-50: #F9ECEC;
+  --color-third-100: #F2D9D9;
+  --color-third-200: #E6B3B3;
+  --color-third-300: #D98C8C;
+  --color-third-400: #CC6666;
+  --color-third-500: #C14545;
+  --color-third-600: #993333;
+  --color-third-700: #732626;
+  --color-third-800: #4D1919;
+  --color-third-900: #260D0D;
+  --color-third-950: #130606;
+  --color-text-50: #F2F2F2;
+  --color-text-100: #E6E6E6;
+  --color-text-200: #CCCCCC;
+  --color-text-300: #B3B3B3;
+  --color-text-400: #999999;
+  --color-text-500: #1E1E1E;
+  --color-text-600: #666666;
+  --color-text-700: #4D4D4D;
+  --color-text-800: #333333;
+  --color-text-900: #1A1A1A;
+  --color-text-950: #0D0D0D;
+  /* Breakpoints */
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 960px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1440px;
+  /* Font Families */
+  --font-family-sans: "Inter var", ui-sans-serif, system-ui, sans-serif;
+  --font-family-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-family-tajawal: "Tajawal", sans-serif;
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-bolder: 800;
+  --font-weight-black: 900;
+  /* Font Sizes */
+  --font-size-xs: 0.625rem;
+  --font-size-sm: 0.75rem;
+  --font-size-md: 0.8125rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.25rem;
+  --font-size-3xl: 1.5rem;
+  --font-size-4xl: 2rem;
+  --font-size-5xl: 2.25rem;
+  --font-size-6xl: 2.5rem;
+  --font-size-7xl: 3rem;
+  --font-size-8xl: 4rem;
+  --font-size-9xl: 6rem;
+  --font-size-10xl: 8rem;
+  /* Custom Spacing Values */
+  --spacing-13: 3.25rem;
+  --spacing-15: 3.75rem;
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+  --spacing-26: 6.5rem;
+  --spacing-30: 7.5rem;
+  --spacing-50: 12.5rem;
+  --spacing-90: 22.5rem;
+  --spacing-100: 25rem;
+  --spacing-120: 30rem;
+  --spacing-128: 32rem;
+  --spacing-140: 35rem;
+  --spacing-160: 40rem;
+  --spacing-180: 45rem;
+  --spacing-192: 48rem;
+  --spacing-200: 50rem;
+  --spacing-240: 60rem;
+  --spacing-256: 64rem;
+  --spacing-280: 70rem;
+  --spacing-320: 80rem;
+  --spacing-360: 90rem;
+  --spacing-400: 100rem;
+  --spacing-480: 120rem;
+  /* Opacity Values */
+  --opacity-12: 0.12;
+  --opacity-38: 0.38;
+  --opacity-87: 0.87;
+  /* Rotation Values */
+  --rotate-15: 15deg;
+  --rotate-30: 30deg;
+  --rotate-60: 60deg;
+  --rotate-270: 270deg;
+  --rotate--270: -270deg;
+  /* Scale Values */
+  --scale--1: -1;
+  /* Z-Index Values */
+  --z-index--1: -1;
+  --z-index-49: 49;
+  --z-index-60: 60;
+  --z-index-70: 70;
+  --z-index-80: 80;
+  --z-index-90: 90;
+  --z-index-99: 99;
+  --z-index-999: 999;
+  --z-index-9999: 9999;
+  --z-index-99999: 99999;
+  /* Transition Durations */
+  --duration-400: 400ms;
+  /* Transition Timing Functions */
+  --ease-drawer: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+/* You can add global styles to this file, and also import other style files */
+*:not(input):not(textarea):not(select) {
+  font-family: "Cairo", sans-serif !important;
+}
+
+.mat-form-field-outline {
+  border-color: #2563eb !important; /* primary-600 */
+}
+
+.mat-mdc-form-field-infix {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}/*# sourceMappingURL=styles.css.map */
