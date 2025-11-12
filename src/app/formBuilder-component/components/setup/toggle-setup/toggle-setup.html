@@ -1,0 +1,51 @@
+<form [formGroup]="form" class="space-y-4 text-sm text-slate-700">
+    <!-- Field Label -->
+    <div>
+        <label class="block mb-1 text-text-800">Field Name (Label)</label>
+        <input formControlName="label" type="text" class="w-full p-2 border border-neutral-300 rounded-md bg-white"
+            placeholder="Enable notifications" />
+    </div>
+
+    <!-- Default Value -->
+    <div class="flex items-center justify-between">
+        <div>
+            <label class="block text-sm text-text-800 mb-2">Default value</label>
+
+            <div class="flex gap-2">
+                <button type="button" (click)="setDefault(true)" [ngClass]="{
+                '!bg-primary-50 !text-primary-600 border !border-primary-600': form.value.defaultValue === true,
+                'bg-text-50 text-text-600': form.value.defaultValue !== true
+                }" class="px-4 py-2 rounded-md">
+                    True
+                </button>
+
+                <button type="button" (click)="setDefault(false)" [ngClass]="{
+                    '!bg-primary-50 !text-primary-600 border !border-primary-600': form.value.defaultValue === false,
+                    'bg-text-50 text-text-600': form.value.defaultValue !== false
+                    }" class="px-4 py-2 rounded-md">
+                    False
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Required Toggle -->
+    <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+        <span class="font-medium text-text-800">Required Field</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" formControlName="required" />
+            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-sky-600 transition"></div>
+            <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full peer-checked:translate-x-5 transition">
+            </div>
+        </label>
+    </div>
+
+    <!-- API Validation -->
+    <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+        <span class="font-medium text-text-800">API Validation</span>
+        <button type="button" (click)="openApiValidation()" class="!text-primary-500 font-semibold text-sm">
+            Set
+        </button>
+    </div>
+</form>

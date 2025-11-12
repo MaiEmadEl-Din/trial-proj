@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormItem } from '../../canvas-component/canvas-component';
+import { FormItem } from '../../../../../../public/utils/types';
 import { FORM_ITEM } from '../../form-item.token';
 
 @Component({

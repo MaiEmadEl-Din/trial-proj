@@ -1,11 +1,14 @@
-@use "./tailwind.css";
+@use './tailwind.css';
+// @use "@angular/material/prebuilt-themes/indigo-pink.css";
 
-/* You can add global styles to this file, and also import other style files */
-
-*:not(input):not(textarea):not(select) {
-  font-family: 'Cairo', sans-serif !important;
+ol {
+  list-style: decimal !important;
+  margin: 10px 20px !important;
 }
-
+ul {
+  list-style: disc !important;
+  margin: 10px 20px !important;
+}
 
 .mat-form-field-outline {
   border-color: #2563eb !important; /* primary-600 */
@@ -14,4 +17,52 @@
 .mat-mdc-form-field-infix {
   padding-left: 10px !important;
   padding-right: 10px !important;
+}
+
+.mat-form-field-appearance-outline .mdc-notched-outline__leading,
+.mat-form-field-appearance-outline .mdc-notched-outline__notch,
+.mat-form-field-appearance-outline .mdc-notched-outline__trailing {
+  border: none !important; /* or border-width: 0 !important; */
+}
+
+.cdk-overlay-pane:not(.mat-mdc-select-panel-above) div.mat-mdc-select-panel {
+  background-color: rgb(231, 227, 227) !important;
+}
+
+.ant-picker-input > input {
+  color: inherit !important;
+  transition: none !important;
+  font-size: inherit !important;
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+}
+
+.ant-picker-suffix {
+  color: inherit !important;
+}
+
+.ant-picker-input > input::placeholder {
+  color: inherit !important;
+}
+
+input[type='color'] {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  padding: 0;
+}
+
+input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type='color']::-webkit-color-swatch {
+  border-radius: 0.25rem;
+  border: 2px solid #999999;
 }

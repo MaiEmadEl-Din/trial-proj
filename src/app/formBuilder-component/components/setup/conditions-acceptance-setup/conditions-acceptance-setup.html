@@ -1,0 +1,52 @@
+<form [formGroup]="form" class="space-y-5 text-sm text-slate-700">
+
+    <!-- Text Area -->
+    <div>
+        <label class="block font-medium mb-2 text-text-800 ">Text Area</label>
+        <div class="NgxEditor__Wrapper min-h-[200px] list-decimal list-inside">
+            <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+            <ngx-editor [editor]="editor" formControlName="content"
+                placeholder="Enter Field Name"></ngx-editor>
+        </div>
+    </div>
+
+    <!-- Acceptation Options -->
+    <div>
+        <label class="block font-medium mb-2 text-text-800">Text Condition and Acceptation</label>
+        <div class="space-y-2">
+            <div *ngFor="let opt of options.controls; let i = index" [formGroup]="$any(opt)" cdkDrag
+                class="flex items-center gap-2 border border-gray-200 p-2 rounded-md bg-white">
+                <span cdkDragHandle class="cursor-move text-gray-400">☰</span>
+                <input type="text" formControlName="label"
+                    class="flex-1 border-b border-gray-300 focus:outline-none focus:border-primary-500"
+                    placeholder="Enter option label" />
+                <button type="button" (click)="removeOption(i)" class="text-gray-400 hover:text-red-500 text-sm">
+                    ✕
+                </button>
+            </div>
+        </div>
+
+        <button type="button" (click)="addOption()" class="!mt-2 text-primary-500 text-sm font-medium">
+            + Add Option
+        </button>
+    </div>
+
+    <!-- Required Toggle -->
+    <div class="flex items-center justify-between border border-gray-200 rounded-md px-3 py-2">
+        <span class="font-medium text-text-800">Required Field</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" formControlName="required" class="sr-only peer" />
+            <div class="w-10 h-5 bg-gray-300 rounded-full peer-checked:bg-primary-500 transition-all"></div>
+            <div
+                class="absolute left-1 top-1 w-3.5 h-3.5 bg-white rounded-full peer-checked:translate-x-5 transition-all">
+            </div>
+        </label>
+    </div>
+
+    <!-- API Validation -->
+    <div class="flex items-center justify-between border border-gray-200 rounded-md px-3 py-2">
+        <span class="font-medium text-text-800">API Validation</span>
+        <button type="button" class="text-primary-500 text-sm font-semibold">Set</button>
+    </div>
+
+</form>

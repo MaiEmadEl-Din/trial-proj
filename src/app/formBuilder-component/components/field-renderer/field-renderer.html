@@ -1,0 +1,390 @@
+@switch (it.type) {
+
+@case ('divider') {
+<div class="w-full">
+    <hr class="!border-text-200 border-t-2" />
+</div>
+}
+
+@case ('heading') {
+<div class="w-full">
+    <div [ngStyle]="it.styles">{{ it.label }}</div>
+</div>
+}
+
+@case ('text') {
+<div class="space-y-2">
+    <label class="block text-sm text-gray-700">
+        {{ it.label || 'Text Field' }}
+    </label>
+    <input type="text" [ngStyle]="mergeStyles(it)" [maxLength]="it.props?.maxLength || 50"
+        (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null,it)"
+        class="mt-1 w-full p-3 border border-gray-300 rounded-md text-gray-700"
+        [placeholder]="it.props?.placeholder || 'Enter text...'" [disabled]="!it.styles?.enabled"
+        [required]="it.props?.required" />
+</div>
+}
+
+@case ('textarea') {
+<div class="space-y-2">
+    <label class="block text-sm text-gray-700">
+        {{ it.label || 'Text Area' }}
+    </label>
+    <div class="relative">
+        <textarea [ngStyle]="it.styles" [maxLength]="it.props?.maxLength || 10"
+            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700" [rows]="it.styles?.rows || 3"
+            [placeholder]="it.props?.placeholder" [required]="it.props?.required ?? false"
+            [disabled]="!it.styles?.enabled"></textarea>
+
+        <div class="absolute -bottom-5 right-2 text-sm text-gray-400">
+            {{ it.props?.['maxLength'] || 10 }}
+        </div>
+    </div>
+</div>
+}
+
+@case ('button') {
+<div class="flex items-center justify-start">
+    <button [type]="it.props?.type?.toLowerCase() || 'button'" [disabled]="it.styles?.enabled === false"
+        [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null, it)" [ngClass]="[
+                getButtonType(it.props?.buttonType ?? 'primary'),
+                'rounded-md px-4 py-2 font-medium flex items-center justify-center gap-2'
+              ]">
+
+        <img *ngIf="it.props?.iconPosition === 'On Left' && it.props?.iconPreview" [src]="it.props?.iconPreview"
+            class="w-4 h-4" />
+
+        {{ it.props?.buttonText || it.label || 'Button' }}
+
+        <img *ngIf="it.props?.iconPosition === 'On Right' && it.props?.iconPreview" [src]="it.props?.iconPreview"
+            class="w-4 h-4" />
+
+    </button>
+</div>
+}
+
+
+@case ('dropdown') {
+<div class="w-full">
+    <label class="block text-sm text-gray-700 mb-1">
+        {{ it.label || 'Dropdown' }}
+    </label>
+
+    <mat-form-field [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null, it)"
+        subscriptSizing="dynamic" appearance="outline" class="w-full border border-gray-300 rounded-md">
+
+        <!-- Dropdown trigger (input) uses hover + default only -->
+        <mat-select [required]="it.props?.required" [disabled]="it.styles?.enabled === false"
+            [placeholder]="it.props?.placeholder || 'Select an option'"
+            (selectionChange)="onSelectionChange($event, $event.value, it, 'dropdown')">
+
+            <!-- Each option checks if it's selected and will apply selected styles -->
+            <mat-option *ngFor="let option of it.props?.options" [value]="option.label"
+                [ngStyle]="mergeStyles(it, option)" (mouseenter)="applyHover(option)"
+                (mouseleave)="removeHover(option)">
+                {{ option.label }}
+            </mat-option>
+
+        </mat-select>
+
+    </mat-form-field>
+</div>
+}
+
+
+@case ('multiple-choice') {
+<div>
+    <label class="block text-sm text-gray-700 mb-1">
+        {{ it.label || 'Multiple Choice' }}
+    </label>
+
+    <div class="mt-2 space-y-1">
+        <mat-checkbox *ngFor="let opt of it.props?.options || [{ label: 'Option 1' }]" [ngStyle]="mergeStyles(it, opt)"
+            (change)="onSelectionChange($event, opt.label, it, 'checkbox')" (mouseenter)="applyHover(opt)"
+            (mouseleave)="removeHover(opt)" [disabled]="it.styles?.enabled === false" class="w-full">
+            {{ opt.label }}
+        </mat-checkbox>
+    </div>
+</div>
+}
+
+@case ('radio') {
+<div>
+    <label class="block text-sm text-gray-700 mb-1">
+        {{ it.label || 'Radio Buttons' }}
+        <span *ngIf="it.props?.required" class="text-red-500">*</span>
+    </label>
+
+    <mat-radio-group class="flex flex-col gap-2" [disabled]="it.styles?.enabled === false">
+
+        <mat-radio-button *ngFor="let opt of it.props?.options || [{ label: 'Option 1' }]" [value]="opt.label"
+            [checked]="opt.isDefault === true" (change)="onSelectionChange($event, opt.label, it, 'radio')"
+            (mouseenter)="applyHover(opt)" (mouseleave)="removeHover(opt)" [ngStyle]="mergeStyles(it, opt)">
+            {{ opt.label }}
+        </mat-radio-button>
+
+    </mat-radio-group>
+</div>
+}
+
+@case ('toggle') {
+<div class="flex items-center gap-3 p-2" [ngStyle]="{
+    borderRadius: it.styles?.borderRadius || '9999px',
+    border: (it.styles?.borderWidth || 0) + ' solid ' + (it.styles?.borderColor || '#000')
+ }">
+
+    <label class="inline-flex items-center cursor-pointer" (mouseenter)="applyHover(null,it)"
+        (mouseleave)="removeHover(null,it)">
+
+        <input type="checkbox" class="sr-only peer" [checked]="it.props?.defaultValue ?? true"
+            [disabled]="it.styles?.enabled === false" (change)="updateToggle(it, $event.target.checked)" />
+
+        <div class="relative w-11 h-6 rounded-full
+                after:content-[''] after:absolute after:top-[2px] after:start-[2px]
+                after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all
+                peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full
+                peer-checked:after:border-gray-500" [ngStyle]="{
+        backgroundColor: (it.props?.defaultValue ?? true)
+          ? (it.styles?.['isHovering'] ? it.styles?.hover?.backgroundColor || it.styles?.backgroundColor || '#0EA5E9' : it.styles?.backgroundColor || '#0EA5E9')
+          : '#E0E0E0'
+      }">
+        </div>
+
+        <span class="ms-3 text-sm font-medium" [ngStyle]="{
+        color: it.styles?.['isHovering'] ? it.styles?.hover?.color || it.styles?.color || '#000' : it.styles?.color || '#000',
+        fontFamily: it.styles?.fontFamily || 'cairo',
+        fontSize: it.styles?.fontSize || 14,
+        fontWeight: it.styles?.fontWeight || '400'
+      }">
+            {{ it.label || 'Toggle me' }}
+        </span>
+
+    </label>
+</div>
+}
+
+
+
+@case ('datetime') {
+@switch (it.props?.dateType ?? 'datetime') {
+
+@case ('datetime') {
+<div class="space-y-4">
+    @switch ((it.props?.dateSelection || 'specific') + '-' + (it.props?.timeSelection || 'specific')) {
+
+    @case ('specific-specific') {
+    <div class="space-y-2">
+        <label class="block"
+            [ngStyle]="{ color: it.styles?.color, 'font-weight': it.styles?.fontWeight, 'font-family': it.styles?.fontFamily, 'font-size': it.styles?.fontSize }">
+            {{ it.label || 'Select date & time' }}
+        </label>
+
+        <div class="flex gap-3">
+            <nz-date-picker class="flex-1" [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)"
+                (mouseleave)="removeHover(null, it)"
+                [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'"
+                [nzDisabled]="it.styles?.enabled === false">
+            </nz-date-picker>
+
+            <nz-time-picker class="flex-1" [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)"
+                (mouseleave)="removeHover(null, it)" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+                [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'"
+                [nzDisabled]="it.styles?.enabled === false">
+            </nz-time-picker>
+        </div>
+    </div>
+    }
+
+    @case ('specific-range') {
+    <div class="space-y-2">
+        <label class="block text-sm text-gray-600">{{ it.label || 'Select date and time range' }}</label>
+        <div class="flex flex-col gap-3">
+            <nz-date-picker class="w-full"
+                [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'">
+            </nz-date-picker>
+
+            <div class="flex gap-3">
+                <nz-time-picker class="flex-1 w-full" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+                    [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+                </nz-time-picker>
+
+                <nz-time-picker class="flex-1 w-full" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+                    [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+                </nz-time-picker>
+            </div>
+        </div>
+    </div>
+    }
+
+    @case ('range-specific') {
+    <div class="space-y-2">
+        <label class="block text-sm text-gray-600">{{ it.label || 'Select date range and specific time' }}</label>
+        <div class="flex flex-col gap-3">
+            <nz-range-picker class="w-full"
+                [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'">
+            </nz-range-picker>
+
+            <nz-time-picker class="w-full" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+                [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+            </nz-time-picker>
+        </div>
+    </div>
+    }
+
+    @case ('range-range') {
+    <div class="space-y-2">
+        <label class="block text-sm text-gray-600">{{ it.label || 'Select date & time range' }}</label>
+
+        <div class="flex flex-col gap-3">
+
+            <div class="flex gap-3 items-center">
+                <span class="w-16 text-gray-600 text-sm">Start</span>
+                <nz-date-picker class="flex-1"
+                    [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'">
+                </nz-date-picker>
+                <nz-time-picker class="flex-1" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+                    [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+                </nz-time-picker>
+            </div>
+
+            <div class="flex gap-3 items-center">
+                <span class="w-16 text-gray-600 text-sm">End</span>
+                <nz-date-picker class="flex-1"
+                    [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'">
+                </nz-date-picker>
+                <nz-time-picker class="flex-1" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+                    [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+                </nz-time-picker>
+            </div>
+
+        </div>
+    </div>
+    }
+
+    @default {
+    <div class="text-sm text-gray-500">Choose date/time options in setup.</div>
+    }
+
+    }
+</div>
+}
+
+@case ('date') {
+<div class="space-y-4">
+    @switch (it.props?.dateSelection) {
+
+    @case ('specific') {
+    <label class="block text-sm text-gray-600">{{ it.label || 'Select date' }}</label>
+    <nz-date-picker class="w-full"
+        [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'">
+    </nz-date-picker>
+    }
+
+    @case ('range') {
+    <label class="block text-sm text-gray-600">{{ it.label || 'Select date' }}</label>
+    <nz-range-picker class="w-full"
+        [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'">
+    </nz-range-picker>
+    }
+
+    @default {
+    <div class="text-sm text-gray-500">Choose date selection in setup.</div>
+    }
+
+    }
+</div>
+}
+
+@case ('time') {
+<div class="space-y-4">
+    @switch (it.props?.timeSelection) {
+
+    @case ('specific') {
+    <label class="block text-sm text-gray-600">{{ it.label || 'Select time' }}</label>
+    <nz-time-picker class="w-full" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+        [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+    </nz-time-picker>
+    }
+
+    @case ('range') {
+    <label class="block text-sm text-gray-600">{{ it.label || 'Select time' }}</label>
+    <div class="flex items-center gap-3">
+        <nz-time-picker class="flex-1" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+            [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+        </nz-time-picker>
+
+        <span>–</span>
+
+        <nz-time-picker class="flex-1" [nzUse12Hours]="it.props?.timeFormat === '12h'"
+            [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'">
+        </nz-time-picker>
+    </div>
+    }
+
+    @default {
+    <div class="text-sm text-gray-500">Choose time selection in setup.</div>
+    }
+
+    }
+</div>
+}
+
+}
+}
+
+@case ('file') {
+<div class="space-y-2">
+    <label class="block text-gray-700 font-medium">
+        {{ it.label || 'Upload Files' }}
+        <span *ngIf="it.props?.required" class="text-red-500">*</span>
+    </label>
+
+    <div class="flex items-center gap-2">
+        <input type="file" [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)"
+            (mouseleave)="removeHover(null, it)"
+            class="flex-1 border border-gray-300 rounded-md p-2 bg-slate-50 text-gray-700 cursor-pointer disabled:cursor-not-allowed"
+            [attr.multiple]="it.props?.maxFiles! > 1 ? '' : null" [attr.accept]="it.props?.fileTypes"
+            [disabled]="it.styles?.enabled === false" (change)="handleFileSelection($event, it)" />
+    </div>
+
+    <p *ngIf="it.props?.filesExceedLimitMessage" class="text-red-600 text-xs mt-1">
+        {{ it.props?.filesExceedLimitMessage }}
+    </p>
+
+    <div class="text-xs text-gray-500 space-y-0.5">
+        <div *ngIf="it.props?.maxFiles">Max files: {{ it.props?.maxFiles }}</div>
+        <div *ngIf="it.props?.maxFileSize">Max file size: {{ it.props?.maxFileSize }} MB</div>
+        <div *ngIf="it.props?.fileTypes?.length">Allowed: {{ it.props?.fileTypes?.join(',') }}</div>
+    </div>
+</div>
+}
+
+@case ('helper') {
+<p class="p-1" [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null, it)">
+    {{ it.props?.content || 'Helper Text' }}
+</p>
+}
+
+@case ('text-condition') {
+<div class="w-full">
+    <div [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null, it)"
+        class="bg-[#F8FAFC] border border-[#E5E7EB] rounded-md px-4 py-3">
+
+        <div class="flex flex-col gap-2 mb-1">
+            <div [innerHTML]="it.props?.content" class="break-all"></div>
+
+            <div class="mt-2 space-y-1">
+                <mat-checkbox *ngFor="let opt of it.props?.options || [{ label: 'Option 1' }]" class="w-full">
+                    {{ opt.label }}
+                </mat-checkbox>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+@default {
+<p class="text-gray-400 text-sm">Unknown field type</p>
+}
+
+}

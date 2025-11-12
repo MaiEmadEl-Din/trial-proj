@@ -1,5 +1,5 @@
-import { CdkDragDrop, CdkDropList, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, inject, ViewChild } from '@angular/core';
+import { CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDropList, DragDropModule, moveItemInArray, Point } from '@angular/cdk/drag-drop';
+import { ChangeDetectorRef, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FieldSetup } from '../setup/field-setup/field-setup';
@@ -8,244 +8,103 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-
-export interface FormItem {
-  type: string;
-  label?: string;
-  icon: string;
-  isHovering?: boolean;
-  props?: {
-    placeholder?: string;
-    required?: boolean;
-    options?: any[];
-    buttonText?: string;
-    classes?: string;
-    width?: 'full' | 'half' | 'auto';
-    multiselect?: boolean;
-    [key: string]: any;
-  };
-  styles?: {
-    backgroundColor?: string;
-    font?: string;
-    fontSize?: number;
-    fontWeight?: string;
-    textColor?: string;
-    textDirection?: 'ltr' | 'rtl';
-    border?: string;
-    enabled?: boolean;
-    fontFamily?: string;
-    color?: string;
-    direction?: 'ltr' | 'rtl';
-    hover?: {
-      backgroundColor?: string;
-      color?: string;
-      fontSize?: number;
-      fontWeight?: string;
-      fontFamily?: string;
-      border?: string;
-      borderWidth?: number;
-      borderRadius?: string;
-      borderColor?: string;
-      direction?: 'ltr' | 'rtl';
-      [key: string]: any;
-    },
-    borderWidth?: number;
-    borderRadius?: string;
-    borderColor?: string;
-    [key: string]: any;
-  };
-}
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { CanvasStateService } from '../../services/canvas.service';
+import { BreadCrumbComponent } from '../../../shared/bread-crumb/bread-crumb.component';
+import { FieldRenderer } from '../field-renderer/field-renderer';
+import { VersionHistoryPanel } from "../version-history-panel/version-history-panel";
+import { VersionHistoryService } from '../../services/version-history.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DeleteDialog } from '../delete-dialog/delete-dialog';
+import { SaveTemplateDialog } from '../save-template-dialog/save-template-dialog';
+import {FormItem} from '../../../../../public/utils/types'
 
 @Component({
   selector: 'app-canvas-component',
+  standalone: true,
   imports: [
-    CommonModule, DragDropModule, FormsModule, ReactiveFormsModule, FieldSetup, FieldStyles,
-    MatIconModule,
-    MatFormFieldModule,
-    MatSelectModule
+    CommonModule, DragDropModule, FormsModule, ReactiveFormsModule,
+    FieldSetup, FieldStyles,
+    MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule,
+    MatButtonModule, MatCheckboxModule, MatRadioModule, MatSlideToggleModule,
+    BreadCrumbComponent,
+    FieldRenderer,
+    VersionHistoryPanel,
+    MatDialogModule
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './canvas-component.html',
   styleUrl: './canvas-component.scss'
 })
 export class CanvasComponent {
-  formData: any;
+  canvasState = inject(CanvasStateService);
+  versionHistory = inject(VersionHistoryService);
   router = inject(Router);
-  activeFormTab: 'basic' | 'templates' = 'basic';
+  dialog = inject(MatDialog);
   @ViewChild('paletteList') paletteList!: CdkDropList;
 
-  accordionOpen = true; // Default open or closed
-
-  toggleAccordion() {
-    this.accordionOpen = !this.accordionOpen;
-  }
-
-
   constructor() {
-    this.formData = this.router.getCurrentNavigation()?.extras.state?.['formData'];
+    this.canvasState.formData.set(this.router.getCurrentNavigation()?.extras.state?.['formData']);
   }
+
   paletteItems: FormItem[] = [
     { type: 'text', label: 'Text Field', icon: 'esc-icons:text-input', props: { placeholder: 'Enter text' } },
+    { type: 'button', label: 'Button', icon: 'esc-icons:button' },
     { type: 'textarea', label: 'Text Area', icon: 'esc-icons:text-area', props: { placeholder: 'Enter description' } },
-    { type: 'button', label: 'Submit Button', icon: 'esc-icons:button', props: { buttonText: 'Submit' } },
-    { type: 'dropdown', label: 'Dropdown', icon: 'esc-icons:arrow-down' },
+    { type: 'dropdown', label: 'Drop Down', icon: 'esc-icons:arrow-down' },
     { type: 'multiple-choice', label: 'Multiple Choice', icon: 'esc-icons:square-check' },
     { type: 'radio', label: 'Radio Button', icon: 'esc-icons:circle-check' },
-    { type: 'toggle', label: 'Toggle Switch', icon: 'esc-icons:toggle' },
+    { type: 'toggle', label: 'Toggle', icon: 'esc-icons:toggle' },
     { type: 'datetime', label: 'Date & Time', icon: 'esc-icons:calendar-clock' },
     { type: 'file', label: 'File Upload', icon: 'esc-icons:upload' },
     { type: 'helper', label: 'Helper Text', icon: 'esc-icons:quote' },
-    { type: 'text-condition', label: 'Terms & Acceptance', icon: 'esc-icons:text-change' },
+    { type: 'text-condition', label: 'Condition', icon: 'esc-icons:text-change' }
   ];
 
-  canvasItems: FormItem[] = [];
-  editingItem: FormItem | null = null;
-  editingIndex: number | null = null;
-  tempItem: FormItem | null = null;
-  activeTab: 'setup' | 'styles' = 'setup';
 
-  drop(event: CdkDragDrop<FormItem[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(this.canvasItems, event.previousIndex, event.currentIndex);
-    } else {
-
-      const newItem = structuredClone(event.previousContainer.data[event.previousIndex]);
-      console.log('newwww', newItem);
-
-      this.canvasItems.push(newItem);
-
-      const index = this.canvasItems.length - 1;
-      this.selectItem(this.canvasItems[index], index, new MouseEvent('click'));
-    }
+  setFont(font: string) {
+    this.canvasState.formStyles.update(s => ({ ...s, fontFamily: font }));
   }
 
-  // --- 🔹 Add from Palette ---
-  addFromPalette(item: FormItem) {
-    const newItem = structuredClone(item);
-    this.canvasItems.push(newItem);
-
-    const index = this.canvasItems.length - 1;
-    this.selectItem(this.canvasItems[index], index, new MouseEvent('click'));
+  setFormAlignment(a: 'justify-start' | 'justify-center' | 'justify-end') {
+    this.canvasState.formStyles.update(s => ({ ...s, alignment: a }));
   }
 
-  // --- 🔹 Select Item (start editing) ---
-  selectItem(item: FormItem, index: number, event: MouseEvent) {
-    event.stopPropagation();
-    this.editingIndex = index;
-
-    // store original copy for cancel
-    // A backup copy of the item’s state before editing — used if you press “Cancel” to revert.
-    this.tempItem = structuredClone(item);
-
-    // link editingItem directly → live preview works
-    this.editingItem = this.canvasItems[index];
+  applyGrid(grid: string) {
+    this.canvasState.formStyles.update(s => ({ ...s, gridColumns: grid }));
   }
 
-  deleteItem(index: number, event: MouseEvent) {
-    event.stopPropagation();
+  openDeleteDialog() {
+    const dialogRef = this.dialog.open(DeleteDialog, {
+      width: '600px',
+      backdropClass: 'bg-black/50',
+      data: { message: 'Deleting this page is permanent. All content will be lost and can’t be recovered.' }
+    });
 
-    // If the deleted item is currently being edited — close the editor
-    if (this.editingIndex === index) {
-      this.clearEditor();
-    }
-
-    // Adjust editingIndex if necessary (e.g., deleting before the current edited one)
-    if (this.editingIndex !== null && index < this.editingIndex) {
-      this.editingIndex--;
-    }
-
-    this.canvasItems.splice(index, 1);
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        console.log('con', confirmed);
+        console.log('Page deleted ');
+      }
+    });
   }
 
+  openSaveTemplateDialog() {
+    const ref = this.dialog.open(SaveTemplateDialog, {
+      width: '520px',
+      backdropClass: 'bg-black/40',
+    });
 
-  // ---  Update item live (setup or props) ---
-  onItemUpdated(updatedItem: FormItem) {
-    if (this.editingItem) {
-      // directly mutate the live item (instant preview)
-      console.log('editt', updatedItem);
-      
-      Object.assign(this.editingItem, updatedItem);
-    }
+    ref.afterClosed().subscribe(value => {
+      if (value) {
+        console.log('Template saved as:', value);
+      }
+    });
   }
 
-  setActiveTab(tab: 'basic' | 'templates') {
-    this.activeFormTab = tab;
-  }
-
-  // --- Update styles live ---
-  onStyleChange(updatedStyles: Record<string, any>) {
-    if (!this.editingItem) return;
-
-    if (!this.editingItem.styles) this.editingItem.styles = {};
-    console.log('hiioo', updatedStyles);
-
-    Object.assign(this.editingItem.styles, updatedStyles['styles']);
-  }
-
-  // ---  Save the whole form ---
-  saveForm() {
-    const payload = {
-      formName: 'My Custom Form',
-      fields: this.canvasItems.map((item, index) => ({
-        type: item.type,
-        label: item.label,
-        props: item.props,
-        styles: item.styles,
-        order: index,
-      })),
-    };
-
-    console.log('payload', payload);
-  }
-
-  // --- Save Edit (keep live changes) ---
-  saveEdit() {
-    // live changes are already applied
-    this.clearEditor();
-  }
-
-  // --- Cancel Edit (revert changes) ---
-  cancelEdit() {
-    if (this.editingIndex !== null && this.tempItem) {
-      // restore snapshot
-      this.canvasItems[this.editingIndex] = structuredClone(this.tempItem);
-    }
-    this.clearEditor();
-  }
-
-  // ---  Reset editing state ---
-  private clearEditor() {
-    this.editingItem = null;
-    this.tempItem = null;
-    this.editingIndex = null;
-  }
-
-
-
-  // Apply hover style when mouse enters
-  applyHover(item: FormItem) {
-    if (!item.styles?.hover) return;
-    item.styles['isHovering'] = true;
-  }
-
-  // Remove hover style when mouse leaves
-  removeHover(item: FormItem) {
-    if (item.styles) {
-      item.styles['isHovering'] = false;
-    }
-  }
-
-  // Merge base styles with hover styles if currently hovering
-  mergeBaseAndHoverStyles(item: FormItem): Record<string, any> {
-    if (!item.styles) return {};
-
-    const base = { ...item.styles };
-    const hover = item.styles.hover || {};
-
-    // Don’t pass control flags or hover itself as CSS
-    delete base.hover;
-    delete base['isHovering'];
-
-    // When hovering, merge the hover styles
-    return item.styles['isHovering'] ? { ...base, ...hover } : base;
-  }
 }

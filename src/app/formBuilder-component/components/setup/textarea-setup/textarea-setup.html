@@ -1,1 +1,39 @@
-<p>textarea-setup works!</p>
+<form [formGroup]="form" class="space-y-4 text-sm text-slate-700">
+    <!-- Field Label -->
+    <div>
+        <label class="block mb-1 font-medium text-text-800">Field Name (Label)</label>
+        <input formControlName="label" type="text" class="w-full p-2 border border-neutral-300 rounded-md bg-white" />
+    </div>
+
+    <!-- Placeholder -->
+    <div>
+        <label class="block mb-1 font-medium text-text-800">Placeholder</label>
+        <input formControlName="placeholder" type="text"
+            class="w-full p-2 border border-neutral-300 rounded-md bg-white" />
+    </div>
+
+    <!-- Length of Field -->
+    <div>
+        <label class="block mb-1 font-medium text-text-800">Length of Field</label>
+        <input formControlName="maxLength" type="number" min="1"
+            class="w-full p-2 border border-neutral-300 rounded-md bg-white" />
+    </div>
+
+    <!-- Required Toggle -->
+    <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+        <span class="font-medium text-text-800">Required Field</span>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" formControlName="required" />
+            <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-sky-600 transition"></div>
+            <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full peer-checked:translate-x-5 transition">
+            </div>
+        </label>
+    </div>
+
+    <!-- API Validation -->
+    <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+        <span class="font-medium text-text-800">API Validation</span>
+        <button type="button" class="!text-primary-500 font-semibold text-sm">Set</button>
+    </div>
+
+</form>

@@ -130,10 +130,6 @@
   --ease-drawer: cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 /* You can add global styles to this file, and also import other style files */
-*:not(input):not(textarea):not(select) {
-  font-family: "Cairo", sans-serif !important;
-}
-
 .mat-form-field-outline {
   border-color: #2563eb !important; /* primary-600 */
 }
@@ -141,4 +137,10 @@
 .mat-mdc-form-field-infix {
   padding-left: 10px !important;
   padding-right: 10px !important;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mdc-notched-outline__leading,
+::ng-deep .mat-form-field-appearance-outline .mdc-notched-outline__notch,
+::ng-deep .mat-form-field-appearance-outline .mdc-notched-outline__trailing {
+  border: none !important; /* or border-width: 0 !important; */
 }/*# sourceMappingURL=styles.css.map */

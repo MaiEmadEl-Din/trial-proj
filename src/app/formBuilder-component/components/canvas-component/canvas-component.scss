@@ -1,8 +1,18 @@
-.shadow-class{
-    box-shadow: 2px 0px 12px 0px #B7B7B740;
+.shadow-class {
+  box-shadow: 2px 0px 12px 0px #b7b7b740;
 }
 
 select[multiple] {
   height: auto !important;
   min-height: 40px !important;
+}
+
+.canvas-container {
+  overflow: auto;
+  background-image: radial-gradient(rgba(47, 47, 47, 0.1) 1px, transparent 1px);
+  background-size: 10px 10px;
+  background-repeat: repeat;
+  &.grid-active {
+    background-color: #fff;
+  }
 }

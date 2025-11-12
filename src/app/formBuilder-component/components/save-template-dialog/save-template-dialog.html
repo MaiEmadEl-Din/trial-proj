@@ -1,0 +1,24 @@
+<div class="rounded-b-4xl overflow-hidden bg-white">
+    <div class="bg-blue-50 text-center py-4 text-lg font-semibold">
+        Save Template
+    </div>
+
+    <div class="p-6">
+        <label class="block text-text-800 mb-2">Template Name</label>
+
+        <input type="text" [formControl]="templateName" placeholder="Template Name"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none placeholder:text-neutral-500" />
+    </div>
+
+    <div class="p-4 flex justify-end gap-3">
+        <button (click)="close()" class="px-5 py-2 rounded-lg bg-text-50 text-gray-700 cursor-pointer">
+            Cancel
+        </button>
+
+        <button (click)="save()"
+            class="px-5 py-2 rounded-lg bg-primary-500 !text-white cursor-pointer disabled:bg-primary-300 disabled:cursor-not-allowed"
+            [disabled]="templateName.invalid">
+            Save
+        </button>
+    </div>
+</div>

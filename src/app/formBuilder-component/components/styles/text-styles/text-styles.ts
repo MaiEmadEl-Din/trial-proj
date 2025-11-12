@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { FormItem } from '../../canvas-component/canvas-component';
+import { FormItem } from '../../../../../../public/utils/types';
 
 @Component({
   selector: 'app-text-styles',
@@ -14,7 +14,6 @@ export class TextStyles {
   @Output() styleUpdated = new EventEmitter<FormItem>();
   window = window;
   activeTab: 'default' | 'hover' = 'default';
-
 
   updateStyle(key: string, eventOrValue: Event | string | number) {
     if (!this.item.styles) this.item.styles = {};

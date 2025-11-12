@@ -1,0 +1,60 @@
+<form [formGroup]="form" class="space-y-4 text-sm text-slate-700">
+
+  <!-- Field Label -->
+  <div>
+    <label class="block mb-1 font-normal text-text-800">Field Name (Label)</label>
+    <input
+      formControlName="label"
+      type="text"
+      class="w-full p-2 border border-neutral-300 rounded-md bg-white"
+      placeholder="Upload Files"
+    />
+  </div>
+
+  <!-- Required Toggle -->
+  <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+    <span class="font-normal text-text-800">Required Field</span>
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" class="sr-only peer" formControlName="required" />
+      <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-sky-600 transition"></div>
+      <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full peer-checked:translate-x-5 transition"></div>
+    </label>
+  </div>
+
+  <!-- Max number of files -->
+  <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+    <span class="font-normal text-text-800">Max number of files</span>
+    <input type="number" min="1" class="w-16 border border-neutral-300 rounded-md text-center" formControlName="maxFiles" />
+  </div>
+
+  <!-- Max file size -->
+  <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+    <span class="font-normal text-text-800">Max file size</span>
+    <input type="number" min="1" class="w-16 border border-neutral-300 rounded-md text-center" formControlName="maxFileSize" />
+  </div>
+
+  <!-- File Type Checkboxes -->
+  <div class="p-3 rounded-md">
+    <span class="text-text-600 block mb-2">File type</span>
+    <div class="grid grid-cols-2 gap-2">
+      <label
+        *ngFor="let ft of fileTypes"
+        class="flex items-center gap-2 cursor-pointer min-h-[28px]"
+      >
+        <input
+          class="!w-5 !h-5 shrink-0 accent-primary-500 cursor-pointer"
+          type="checkbox"
+          [checked]="form.value.fileTypes?.includes(ft.value)"
+          (change)="toggleFileType(ft.value)"
+        />
+        <span class="text-text-600 text-sm">{{ ft.label }}</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- API Validation -->
+  <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+    <span class="font-normal text-text-800">API Validation</span>
+    <button type="button" class="!text-primary-500 font-semibold text-sm">Set</button>
+  </div>
+</form>

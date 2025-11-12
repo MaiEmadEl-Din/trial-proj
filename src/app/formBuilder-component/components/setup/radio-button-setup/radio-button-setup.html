@@ -1,0 +1,109 @@
+<div class="space-y-4" [formGroup]="form">
+  <!-- Field Label -->
+  <div>
+    <label class="text-sm text-gray-700">Field Name (Label)</label>
+    <input formControlName="label" type="text"
+      class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none" />
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex items-center my-3">
+    <button (click)="setTab('Manual')" [ngClass]="{
+      'border-b-2 border-primary-500 !text-black': activeTab === 'Manual',
+      '!text-text-400': activeTab !== 'Manual'
+    }" class="py-1 px-3 font-medium focus:outline-none transition-colors duration-200">
+      Manual
+    </button>
+
+    <button (click)="setTab('Query')" [ngClass]="{
+      'border-b-2 border-primary-500 !text-black': activeTab === 'Query',
+      '!text-text-400': activeTab !== 'Query'
+    }" class="py-1 px-3 font-medium focus:outline-none transition-colors duration-200">
+      Query
+    </button>
+
+    <button (click)="setTab('API')" [ngClass]="{
+      'border-b-2 border-primary-500 !text-black': activeTab === 'API',
+      '!text-text-400': activeTab !== 'API'
+    }" class="py-1 px-3 font-medium focus:outline-none transition-colors duration-200">
+      API
+    </button>
+  </div>
+
+  <!-- Manual Options -->
+  <div *ngIf="activeTab === 'Manual'" formArrayName="options" class="space-y-2 mb-3">
+    <div *ngFor="let opt of options.controls; let i = index" [formGroupName]="i"
+      class="flex items-center justify-between px-2 py-1.5 rounded">
+      <div class="flex items-center gap-2 flex-1">
+        <input type="radio" name="defaultOption" [checked]="opt.value.isDefault" (change)="selectDefault(i)"
+          class="cursor-pointer text-primary-500" />
+        <input formControlName="label" type="text"
+          class="focus:border-b focus:border-blue-500 !text-text-600 outline-none flex-1 bg-transparent" />
+      </div>
+      <button (click)="removeOption(i)" class="text-gray-400 hover:text-red-500 text-lg leading-none cursor-pointer">✕</button>
+    </div>
+
+    <div class="text-sm !text-primary-500 flex gap-2">
+      <button (click)="addOption()" class="cursor-pointer">Add Option +</button>
+    </div>
+  </div>
+
+  <!-- Query Config -->
+  <div *ngIf="activeTab === 'Query'" [formGroup]="queryConfig" class="space-y-3">
+    <div>
+      <label class="text-sm text-gray-700">Query</label>
+      <input formControlName="query" type="text"
+        class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none" />
+    </div>
+    <div>
+      <label class="text-sm text-gray-700">Display Field</label>
+      <input formControlName="displayField" type="text"
+        class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none" />
+    </div>
+  </div>
+
+  <!-- API Config -->
+  <div *ngIf="activeTab === 'API'" [formGroup]="apiConfig" class="space-y-3">
+    <div>
+      <label class="text-sm text-gray-700">URL</label>
+      <input formControlName="url" type="text"
+        class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none" />
+    </div>
+    <div>
+      <label class="text-sm text-gray-700">Method</label>
+      <select formControlName="method"
+        class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+      </select>
+    </div>
+    <div>
+      <label class="text-sm text-gray-700">Auth Header</label>
+      <input formControlName="authHeader" type="text"
+        class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none" />
+    </div>
+  </div>
+
+  <!-- Placeholder -->
+  <div>
+    <label class="block mb-1 font-medium text-text-800">Placeholder</label>
+    <input formControlName="placeholder" type="text"
+      class="w-full p-2 border border-neutral-300 rounded-md bg-white" />
+  </div>
+
+  <!-- Required Toggle -->
+  <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+    <span class="font-medium text-text-800">Required Field</span>
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" class="sr-only peer" formControlName="required" />
+      <div class="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-sky-600 transition"></div>
+      <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full peer-checked:translate-x-5 transition"></div>
+    </label>
+  </div>
+
+  <!-- API Validation -->
+  <div class="flex items-center justify-between border border-neutral-300 p-3 rounded-md">
+    <span class="font-medium text-text-800">API Validation</span>
+    <button type="button" class="!text-primary-500 font-semibold text-sm">Set</button>
+  </div>
+</div>

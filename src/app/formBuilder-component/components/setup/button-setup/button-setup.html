@@ -1,0 +1,68 @@
+<form [formGroup]="form" class="space-y-5 text-sm text-slate-700">
+
+  <!-- Button Type -->
+  <div>
+    <label class="block text-gray-600 mb-1">Button Type</label>
+    <div class="flex gap-2 overflow-auto hide-scrollbar">
+      <button
+        *ngFor="let type of buttonTypes"
+        type="button"
+        (click)="form.get('buttonType')?.setValue(type)"
+        class="px-3 py-1.5 rounded-md text-sm font-medium"
+        [ngClass]="{
+          'border !border-primary-600 !bg-primary-50 !text-primary-600': form.get('buttonType')?.value === type,
+          '!bg-text-50 !text-text-600': form.get('buttonType')?.value !== type
+        }"
+      >
+        {{ type }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Label -->
+  <div>
+    <label class="block text-gray-600 mb-1">Label</label>
+    <input
+      formControlName="label"
+      type="text"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+    />
+  </div>
+
+  <!-- Type -->
+  <div>
+    <label class="block text-gray-600 mb-1">Type</label>
+    <select
+      formControlName="type"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+    >
+      <option *ngFor="let t of buttonFunctions" [value]="t">{{ t }}</option>
+    </select>
+  </div>
+
+  <!-- Icon Position -->
+  <div>
+    <label class="block text-gray-600 mb-1">Icon</label>
+    <select
+      formControlName="iconPosition"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+    >
+      <option *ngFor="let pos of iconPositions" [value]="pos">{{ pos }}</option>
+    </select>
+  </div>
+
+  <!-- Upload Icon -->
+  <div class="border border-dashed border-primary-600 bg-primary-50 rounded-md p-3 text-center">
+    <label class="cursor-pointer text-primary-600 font-medium">
+      <input type="file" class="hidden" (change)="onFileSelected($event)" />
+      Upload Icon
+    </label>
+  </div>
+
+  <!-- API Validation -->
+  <div class="flex items-center justify-between border border-gray-300 p-3 rounded-md">
+    <span class="font-medium text-text-800">API Validation</span>
+    <button type="button" class="!text-primary-600 font-semibold text-sm">Set</button>
+  </div>
+
+</form>

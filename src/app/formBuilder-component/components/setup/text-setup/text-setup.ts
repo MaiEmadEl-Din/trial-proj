@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Inject, Output } from '@ang
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FORM_ITEM } from '../../form-item.token';
-import { FormItem } from '../../canvas-component/canvas-component';
+import { FormItem } from '../../../../../../public/utils/types';
 
 @Component({
   selector: 'app-text-setup',
@@ -25,7 +25,7 @@ export class TextSetup {
       placeholder: [item.props?.['placeholder'] || ''],
       required: [item.props?.['required'] || false],
       apiValidation: [item.props?.['apiValidation'] || ''],
-      length: [item.props?.['length'] || ''],
+      maxLength: [item.props?.['maxLength'] || '50'],
     });
 
     this.form.valueChanges.subscribe(val => {
@@ -36,7 +36,7 @@ export class TextSetup {
         placeholder: val.placeholder,
         required: val.required,
         apiValidation: val.apiValidation,
-        length: val.length,
+        maxLength: val.maxLength,
       };      
       this.itemUpdated.emit(item);
     });
