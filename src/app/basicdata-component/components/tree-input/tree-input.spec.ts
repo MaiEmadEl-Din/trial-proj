@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MultiChoiceStyles } from './multi-choice-styles';
+import { TreeInput } from './tree-input';
 
-describe('MultiChoiceStyles', () => {
-  let component: MultiChoiceStyles;
-  let fixture: ComponentFixture<MultiChoiceStyles>;
+describe('TreeInput', () => {
+  let component: TreeInput;
+  let fixture: ComponentFixture<TreeInput>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MultiChoiceStyles]
+      imports: [TreeInput]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MultiChoiceStyles);
+    fixture = TestBed.createComponent(TreeInput);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

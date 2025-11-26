@@ -32,7 +32,7 @@ export class FileSetup {
   ) {
     this.form = this.fb.group({
       label: [item.label || ''],
-      required: [item.props?.['required'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
       maxFiles: [item.props?.['maxFiles'] || 1],
       maxFileSize: [item.props?.['maxFileSize'] || 5],
       fileTypes: [item.props?.['fileTypes'] || []],
@@ -43,7 +43,7 @@ export class FileSetup {
       item.label = val.label;
       item.props = {
         ...item.props,
-        required: val.required,
+        isRequired: val.isRequired,
         maxFiles: val.maxFiles,
         maxFileSize: val.maxFileSize,
         fileTypes: val.fileTypes,

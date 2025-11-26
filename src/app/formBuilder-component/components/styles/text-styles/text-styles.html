@@ -1,19 +1,14 @@
 <div class="flex flex-col gap-6 text-sm text-gray-800 w-[240px]">
   <!-- Tabs -->
   <div class="flex w-full justify-center items-center">
+    @for (tab of item.styleTabs; track $index) {
     <button class="px-3 pb-2 text-sm font-medium border-b-2 w-full"
-      [ngClass]="activeTab === 'default' ? 'border-sky-500 text-black' : 'border-transparent text-gray-400'"
-      (click)="activeTab = 'default'">
-      Default
+      [ngClass]="activeTab === tab ? 'border-sky-500 text-black' : 'border-transparent text-gray-400'"
+      (click)="activeTab = tab">
+      {{tab}}
     </button>
-    <button class="px-3 pb-2 text-sm font-medium border-b-2 w-full"
-      [ngClass]="activeTab === 'hover' ? 'border-sky-500 text-black' : 'border-transparent text-gray-400'"
-      (click)="activeTab = 'hover'">
-      Hover
-    </button>
+    }
   </div>
-
-
 
   <div [ngSwitch]="activeTab">
     <!-- Basic Styles -->
@@ -24,8 +19,8 @@
           <label class="text-gray-600 text-sm">Background Color</label>
           <div class="flex items-center gap-2 rounded border border-text-200 px-4 py-1">
             <input type="color" class="w-5 h-6 cursor-pointer rounded"
-              [value]="item.styles?.backgroundColor || '#FF4332'" (input)="updateStyle('backgroundColor', $event)" />
-            <div>{{item.styles?.backgroundColor || '#FF4332'}}</div>
+              [value]="item.styles?.default?.backgroundColor || '#FF4332'" (input)="updateStyle('backgroundColor', $event)" />
+            <div>{{item.styles?.default?.backgroundColor || '#FF4332'}}</div>
           </div>
         </div>
       </div>
@@ -38,6 +33,18 @@
               [value]="item.styles?.hover?.backgroundColor || '#FF4332'"
               (input)="updateStyle('backgroundColor', $event)" />
             <div>{{ item.styles?.hover?.backgroundColor || '#FF4332' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-gray-600 text-sm">Background Color</label>
+          <div class="flex items-center gap-2 rounded border border-text-200 px-4 py-1">
+            <input type="color" class="w-5 h-6 cursor-pointer rounded"
+              [value]="item.styles?.selected?.backgroundColor || '#FF4332'"
+              (input)="updateStyle('backgroundColor', $event)" />
+            <div>{{ item.styles?.selected?.backgroundColor || '#FF4332' }}</div>
           </div>
         </div>
       </div>
@@ -61,10 +68,11 @@
     <div class="pt-2 space-y-3">
       <div class="!text-sm !text-neutral-600 !font-semibold">Text</div>
 
+      <!-- font family -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div>
           <label class="block text-gray-600 mb-1">Font</label>
-          <select class="w-full border border-gray-300 rounded px-2 py-1" [value]="item.styles?.fontFamily || 'cairo'"
+          <select class="w-full border border-gray-300 rounded px-2 py-1" [value]="item.styles?.default?.fontFamily || 'cairo'"
             (change)="updateStyle('fontFamily', $event)">
             <option>sans-serif</option>
             <option>serif</option>
@@ -92,12 +100,27 @@
         </div>
       </div>
 
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div>
+          <label class="block text-gray-600 mb-1">Font</label>
+          <select class="w-full border border-gray-300 rounded px-2 py-1"
+            [value]="item.styles?.selected?.fontFamily || 'cairo'" (change)="updateStyle('fontFamily', $event)">
+            <option>sans-serif</option>
+            <option>serif</option>
+            <option>Inter</option>
+            <option>cairo</option>
+            <option>cursive</option>
+            <option>fantasy</option>
+          </select>
+        </div>
+      </div>
 
+      <!-- font size -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div>
           <label class="block text-gray-600 mb-1">Font size</label>
           <input type="number" class="w-full border border-gray-300 rounded px-2 py-1"
-            [value]="parseNumber(item.styles?.fontSize, 16)" (input)="updateStyle('fontSize', $event)" />
+            [value]="parseNumber(item.styles?.default?.fontSize, 16)" (input)="updateStyle('fontSize', $event)" />
         </div>
       </div>
 
@@ -109,11 +132,21 @@
         </div>
       </div>
 
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div>
+          <label class="block text-gray-600 mb-1">Font size</label>
+          <input type="number" class="w-full border border-gray-300 rounded px-2 py-1"
+            [value]="parseNumber(item.styles?.selected?.fontSize, 16)" (input)="updateStyle('fontSize', $event)" />
+        </div>
+      </div>
+
+
+      <!-- font weight -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div>
           <label class="block text-gray-600 mb-1">Font weight</label>
           <select class="w-full border border-gray-300 rounded px-2 py-1 text-gray-700"
-            [value]="item.styles?.fontWeight || '400'" (change)="updateStyle('fontWeight', $event)">
+            [value]="item.styles?.default?.fontWeight || '400'" (change)="updateStyle('fontWeight', $event)">
             <option value="100">Thin (100)</option>
             <option value="200">Extra Light (200)</option>
             <option value="300">Light (300)</option>
@@ -145,14 +178,33 @@
         </div>
       </div>
 
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div>
+          <label class="block text-gray-600 mb-1">Font weight</label>
+          <select class="w-full border border-gray-300 rounded px-2 py-1 text-gray-700"
+            [value]="item.styles?.selected?.fontWeight || '400'" (change)="updateStyle('fontWeight', $event)">
+            <option value="100">Thin (100)</option>
+            <option value="200">Extra Light (200)</option>
+            <option value="300">Light (300)</option>
+            <option value="400">Normal (400)</option>
+            <option value="500">Medium (500)</option>
+            <option value="600">Semi Bold (600)</option>
+            <option value="700">Bold (700)</option>
+            <option value="800">Extra Bold (800)</option>
+            <option value="900">Black (900)</option>
+          </select>
+        </div>
+      </div>
 
+
+      <!-- text color -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div class="flex items-center justify-between">
           <label class="text-gray-600 text-sm">Text color</label>
           <div class="flex items-center gap-2 rounded border border-text-200 px-4 py-1">
-            <input type="color" class="w-5 h-6 cursor-pointer rounded" [value]="item.styles?.color || '#FF4332'"
+            <input type="color" class="w-5 h-6 cursor-pointer rounded" [value]="item.styles?.default?.color || '#FF4332'"
               (input)="updateStyle('color', $event)" />
-            <div>{{item.styles?.color || '#FF4332'}}</div>
+            <div>{{item.styles?.default?.color || '#FF4332'}}</div>
           </div>
         </div>
       </div>
@@ -168,16 +220,31 @@
         </div>
       </div>
 
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-gray-600 text-sm">Text color</label>
+          <div class="flex items-center gap-2 rounded border border-text-200 px-4 py-1">
+            <input type="color" class="w-5 h-6 cursor-pointer rounded"
+              [value]="item.styles?.selected?.color || '#FF4332'" (input)="updateStyle('color', $event)" />
+            <div>{{item.styles?.selected?.color || '#FF4332'}}</div>
+          </div>
+        </div>
+      </div>
 
+
+
+
+
+      <!-- text direction -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div class="flex items-center justify-between">
           <label class="text-gray-600 text-sm">Text Direction</label>
           <div class="flex gap-2">
             <button class="px-3 py-1 rounded border"
-              [ngClass]="item.styles?.direction === 'ltr' ? '!bg-sky-50 !border-sky-500 !text-sky-600' : '!text-gray-600'"
+              [ngClass]="item.styles?.default?.direction === 'ltr' ? '!bg-sky-50 !border-sky-500 !text-sky-600' : '!text-gray-600'"
               (click)="updateStyle('direction', 'ltr')">LTR</button>
             <button class="px-3 py-1 rounded border"
-              [ngClass]="item.styles?.direction === 'rtl' ? 'bg-sky-50 border-sky-500 text-sky-600' : 'text-gray-600'"
+              [ngClass]="item.styles?.default?.direction === 'rtl' ? 'bg-sky-50 border-sky-500 text-sky-600' : 'text-gray-600'"
               (click)="updateStyle('direction', 'rtl')">RTL</button>
           </div>
         </div>
@@ -188,11 +255,13 @@
     <div class="pt-2 space-y-3 ">
       <div class="!text-sm !text-neutral-600 !font-semibold">Border</div>
 
+
+      <!-- border width -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div>
           <label class="block text-gray-600 mb-1">Border</label>
           <input type="number" class="w-full border border-gray-300 rounded px-2 py-1"
-            [value]="parseNumber(item.styles?.borderWidth, 1)" (input)="updateStyle('borderWidth', $event)" />
+            [value]="parseNumber(item.styles?.default?.borderWidth, 1)" (input)="updateStyle('borderWidth', $event)" />
         </div>
       </div>
 
@@ -204,12 +273,21 @@
         </div>
       </div>
 
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div>
+          <label class="block text-gray-600 mb-1">Border</label>
+          <input type="number" class="w-full border border-gray-300 rounded px-2 py-1"
+            [value]="parseNumber(item.styles?.selected?.borderWidth, 1)" (input)="updateStyle('borderWidth', $event)" />
+        </div>
+      </div>
 
+
+      <!-- border radius -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div>
           <label class="block text-gray-600 mb-1">Border radius</label>
           <input type="number" class="w-full border border-gray-300 rounded px-2 py-1"
-            [value]="parseNumber(item.styles?.borderRadius, 1)" (input)="updateStyle('borderRadius', $event)" />
+            [value]="parseNumber(item.styles?.default?.borderRadius, 1)" (input)="updateStyle('borderRadius', $event)" />
         </div>
       </div>
 
@@ -221,16 +299,28 @@
         </div>
       </div>
 
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div>
+          <label class="block text-gray-600 mb-1">Border radius</label>
+          <input type="number" class="w-full border border-gray-300 rounded px-2 py-1"
+            [value]="parseNumber(item.styles?.selected?.borderRadius, 1)" (input)="updateStyle('borderRadius', $event)" />
+        </div>
+      </div>
+
+
+
+      <!-- border color -->
       <div *ngSwitchCase="'default'" class="space-y-3">
         <div class="flex items-center justify-between">
           <label class="text-gray-600 text-sm">Border color</label>
           <div class="flex items-center gap-2 rounded border border-text-200 px-4 py-1">
-            <input type="color" class="w-5 h-6 cursor-pointer rounded" [value]="item.styles?.borderColor || '#FF4332'"
+            <input type="color" class="w-5 h-6 cursor-pointer rounded" [value]="item.styles?.default?.borderColor || '#FF4332'"
               (input)="updateStyle('borderColor', $event)" />
-            <div>{{item.styles?.borderColor || '#FF4332'}}</div>
+            <div>{{item.styles?.default?.borderColor || '#FF4332'}}</div>
           </div>
         </div>
       </div>
+
       <div *ngSwitchCase="'hover'" class="space-y-3">
         <div class="flex items-center justify-between">
           <label class="text-gray-600 text-sm">Border color</label>
@@ -238,6 +328,17 @@
             <input type="color" class="w-5 h-6 cursor-pointer rounded"
               [value]="item.styles?.hover?.borderColor || '#FF4332'" (input)="updateStyle('borderColor', $event)" />
             <div>{{item.styles?.hover?.borderColor || '#FF4332'}}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngSwitchCase="'selected'" class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-gray-600 text-sm">Border color</label>
+          <div class="flex items-center gap-2 rounded border border-text-200 px-4 py-1">
+            <input type="color" class="w-5 h-6 cursor-pointer rounded"
+              [value]="item.styles?.selected?.borderColor || '#FF4332'" (input)="updateStyle('borderColor', $event)" />
+            <div>{{item.styles?.selected?.borderColor || '#FF4332'}}</div>
           </div>
         </div>
       </div>

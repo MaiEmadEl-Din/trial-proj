@@ -24,7 +24,7 @@ export class ToggleSetup {
     this.form = this.fb.group({
       label: [item.label || 'Toggle Label'],
       defaultValue: [item.props?.['defaultValue'] ?? true],
-      required: [item.props?.['required'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
       apiValidation: [item.props?.['apiValidation'] || ''],
     });
 
@@ -33,7 +33,7 @@ export class ToggleSetup {
       item.props = {
         ...item.props,
         defaultValue: val.defaultValue,
-        required: val.required,
+        isRequired: val.isRequired,
         apiValidation: val.apiValidation,
       };
       this.itemUpdated.emit(item);

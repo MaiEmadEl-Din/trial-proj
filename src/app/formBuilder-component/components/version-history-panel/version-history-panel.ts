@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject, signal } from '@angular/core';
 import { CanvasStateService } from '../../services/canvas.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,4 +16,13 @@ import { VersionHistoryService } from '../../services/version-history.service';
 export class VersionHistoryPanel {
   versionHistory = inject(VersionHistoryService);
   canvasService = inject(CanvasStateService);
+
+
+  close(){
+    console.log('closee');
+    console.log(this.versionHistory.isVersionHistoryOpen());
+    
+    
+    this.versionHistory.isVersionHistoryOpen.set(false);
+  }
 }

@@ -1,0 +1,49 @@
+<ul class="ml-6 border-l border-gray-300 pl-4">
+    <li *ngFor="let node of nodes" class="mb-2">
+        <div class="flex items-center space-x-2">
+            <!-- Toggle / Expand (if needed) -->
+            <button *ngIf="node.children?.length"
+                class="w-5 h-5 flex items-center justify-center border rounded text-xs"
+                (click)="node['expanded'] = !node['expanded']">
+                {{ node['expanded'] ? '-' : '+' }}
+            </button>
+
+            <!-- Node Name or Edit -->
+            <ng-container *ngIf="!node.isEditing; else editMode">
+                <div class="flex items-center gap-3">
+                    <div class="px-3 py-1 bg-gray-100 rounded">{{ node.name }}</div>
+                    <button class="p-1 border border-gray-200 rounded flex items-center justify-center cursor-pointer" (click)="addChild(node)">
+                        <mat-icon svgIcon="mat_outline:add" class="!text-primary-500"></mat-icon>
+                    </button>
+                    <button class="p-1 border border-gray-200 rounded flex items-center justify-center cursor-pointer"
+                        (click)="editNode(node)">
+                        <mat-icon svgIcon="esc-icons:edit"  class="!text-primary-500"></mat-icon>
+                    </button>
+                    <button class="p-1 border border-gray-200 rounded flex items-center justify-center cursor-pointer"
+                        (click)="deleteNode(node, nodes)">
+                        <mat-icon svgIcon="esc-icons:delete"></mat-icon>
+                    </button>
+                </div>
+            </ng-container>
+
+            <!-- Edit Mode -->
+            <ng-template #editMode>
+                <div class="flex gap-3">
+                    <input type="text" [value]="node.name" #editInput class="border rounded px-2 py-1" />
+                    <button class="p-1 border border-gray-200 rounded flex items-center justify-center cursor-pointer font-medium !text-primary-500"
+                        (click)="applyEdit(node, editInput.value)">
+                        Apply
+                    </button>
+                    <button class="px-2 border border-gray-200 rounded flex items-center justify-center cursor-pointer !text-red-700" (click)="node.isEditing=false">
+                        ✕
+                    </button>
+                </div>
+            </ng-template>
+        </div>
+
+        <!-- Recursive Children -->
+        <div *ngIf="node.children?.length && node['expanded'] !== false">
+            <app-tree-input [nodes]="node.children!" (nodesChange)="nodesChange.emit(nodes)"></app-tree-input>
+        </div>
+    </li>
+</ul>

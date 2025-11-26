@@ -6,10 +6,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { lookupService } from '../../lookup.service';
 import { map } from 'rxjs';
 import { isEqual } from 'lodash-es';
+import { TreeInput, TreeNode } from "../tree-input/tree-input";
 
 @Component({
   selector: 'app-basicdata-form',
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, TreeInput],
   templateUrl: './basicdata-form.html',
   styleUrl: './basicdata-form.scss'
 })
@@ -26,10 +27,7 @@ export class BasicdataForm {
   dataEffect = effect(() => {
     const data = this.lookupService.getByIdResult();
     if (data) {
-      console.log('heree');
       this.lookupForm.patchValue(data);
-      console.log(this.lookupForm.value);
-      
       this.originalFormData = this.lookupForm.getRawValue();
     }
   });
@@ -105,4 +103,24 @@ export class BasicdataForm {
     }
     return isEqual(currentValue, this.originalFormData);
   }
+
+
+
+
+  tree: TreeNode[] = [
+    {
+      id: '1',
+      name: 'First Parent',
+      children: [
+        { id: '1-1', name: 'First Child', children: [] },
+        { id: '1-2', name: 'Second Child', children: [] },
+      ]
+    },
+    {
+      id: '2',
+      name: 'First Parent',
+      children: []
+    }
+  ];
+
 }

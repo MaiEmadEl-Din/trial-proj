@@ -29,7 +29,7 @@ export class DateTimeSetup {
       timeZone: [item.props?.['timeZone'] || 'local'],
       timeFormat: [item.props?.['timeFormat'] || '24h'],
       dateFormat: [item.props?.['dateFormat'] || 'MM-DD-YYYY'],
-      required: [item.props?.['required'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
     });
 
     this.form.valueChanges.subscribe((val) => {

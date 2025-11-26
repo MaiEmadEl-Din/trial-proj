@@ -63,7 +63,6 @@ export class gridAdvancedPaginationService {
         if (event.top == -1) return;
         const lastDisplayedRow = this.gridApi.getLastDisplayedRowIndex();
         let pageNumber = this.endRow / this.meta.size;
-        console.log('scroll', lastDisplayedRow, this.endRow, pageNumber, this.meta.totalPages);
         
         if (this.meta.totalPages > pageNumber && lastDisplayedRow === this.endRow - 1) {
             const newStartRow = lastDisplayedRow + 1;

@@ -37,7 +37,7 @@ export class FieldRenderer {
     }
     // For single items (like text fields)
     else if (item?.styles) {
-      item.styles['isHovering'] = true;
+      item['isHovering'] = true;
     }
   }
 
@@ -45,23 +45,20 @@ export class FieldRenderer {
     if (target && !item) {
       target.isHovering = false;
     } else if (item?.styles) {
-      item.styles['isHovering'] = false;
+      item['isHovering'] = false;
     }
   }
 
   mergeStyles(item: FormItem, target?: any): Record<string, any> {
     if (!item.styles) return {};
-
-    const base = { ...item.styles };
+    
+    const base = { ...item.styles.default };
     const hover = item.styles.hover || {};
     const selected = item.styles.selected || {};
 
-    delete base.hover;
-    delete base.selected;
-    delete base['isHovering'];
 
     const isOptionHovering = target?.isHovering;
-    const isItemHovering = item.styles['isHovering'];
+    const isItemHovering = item['isHovering'];
 
     const selectedState = this.selectedValuesMap[item.label!];
 

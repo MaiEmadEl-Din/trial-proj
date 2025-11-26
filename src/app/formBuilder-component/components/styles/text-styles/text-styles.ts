@@ -12,40 +12,32 @@ import { FormItem } from '../../../../../../public/utils/types';
 export class TextStyles {
   @Input() item!: FormItem;
   @Output() styleUpdated = new EventEmitter<FormItem>();
-  window = window;
-  activeTab: 'default' | 'hover' = 'default';
+  activeTab: 'default' | 'selected' | 'hover' = 'default';
 
   updateStyle(key: string, eventOrValue: Event | string | number) {
     if (!this.item.styles) this.item.styles = {};
 
     let value: any;
-
     if (eventOrValue instanceof Event) {
       const target = eventOrValue.target as HTMLInputElement | HTMLSelectElement;
-      if (target.type === 'checkbox') {
-        value = (target as HTMLInputElement).checked;
-      } else {
-        value = target.value;
-      }
+      value = target.type === 'checkbox' ? (target as HTMLInputElement).checked : target.value;
     } else {
-      value = eventOrValue; // direct value like 'ltr' or 'rtl'
+      value = eventOrValue;
     }
 
-    const numericStyles = ['fontSize', 'padding', 'margin', 'borderRadius', 'borderWidth', 'gap'];
-
-    // --- Handle hover or default styles ---
-    let targetStyles: any =
-      this.activeTab === 'hover'
-        ? (this.item.styles.hover ??= {})
-        : this.item.styles;
+    const numericStyles = ['fontSize', 'borderWidth', 'borderRadius', 'checkboxSize'];
+    const styleTarget =
+      this.activeTab === 'selected'
+        ? (this.item.styles['selected'] ??= {})
+        : this.activeTab === 'hover'
+          ? (this.item.styles['hover'] ??= {})
+          : this.item.styles.default ??= {};
 
     if (numericStyles.includes(key)) {
       const num = Number(value);
-      if (!isNaN(num)) {
-        targetStyles[key] = `${num}px`;
-      }
+      if (!isNaN(num)) styleTarget[key] = `${num}px`;
     } else {
-      targetStyles[key] = value;
+      styleTarget[key] = value;
     }
 
     this.styleUpdated.emit(this.item);

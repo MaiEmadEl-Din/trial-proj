@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
                 <mat-icon svgIcon="esc-icons:columns-3-cog"></mat-icon>
-                <p class="font-bold text-sm">Form Editor</p>
+                <p class="font-bold text-sm !m-0 !p-0">Form Editor</p>
             </div>
             <div class="bg-primary-100 font-medium text-primary-600 capitalize py-1 px-3 rounded-full">
                 {{ canvasState.formData()?.formType + ' page'}}
@@ -104,24 +104,25 @@
                 <button class="bg-primary-500 px-5 py-1 rounded !text-white cursor-pointer
                 disabled:opacity-50 disabled:cursor-not-allowed" [disabled]="canvasState.canvasItems().length === 0"
                     (click)="canvasState.saveForm()">Save</button>
-                <button (click)="canvasState.toggleTopRightMenu($event)"
+                <button (click)="toggleTopRightMenu($event)"
                     class="p-1 flex justify-center items-center bg-white border border-neutral-200 rounded cursor-pointer">
                     <mat-icon svgIcon="esc-icons:menu"></mat-icon>
                 </button>
                 <!-- Menu -->
-                @if (canvasState.topRightMenuOpen()) {
+                @if (topRightMenuOpen()) {
                 <div class="absolute right-4 mt-10 w-40 bg-white border border-neutral-200 rounded shadow-lg z-50">
-                    <button 
-                    (click)="openSaveTemplateDialog()"
-                    class=" flex items-center gap-2 px-4 py-2 !text-primary-500 cursor-pointer">
-                    <mat-icon svgIcon="esc-icons:bookmark" class="!w-4 !h-4"></mat-icon>
+                    <button (click)="openSaveTemplateDialog()"
+                        class=" flex items-center gap-2 px-4 py-2 !text-primary-500 cursor-pointer">
+                        <mat-icon svgIcon="esc-icons:bookmark" class="!w-4 !h-4"></mat-icon>
                         Save as Temp
                     </button>
-                    <button (click)="canvasState.duplicateForm()" class="flex items-center gap-2 px-4 py-2 !text-text-800 cursor-pointer">
+                    <button (click)="canvasState.duplicateForm()"
+                        class="flex items-center gap-2 px-4 py-2 !text-text-800 cursor-pointer">
                         <mat-icon svgIcon="esc-icons:duplicate" class="!w-4 !h-4"></mat-icon>
                         Duplicate
                     </button>
-                    <button (click)="openDeleteDialog()" class="flex items-center gap-2 px-4 py-2 !text-third-500 cursor-pointer">
+                    <button (click)="openDeleteDialog()"
+                        class="flex items-center gap-2 px-4 py-2 !text-third-500 cursor-pointer">
                         <mat-icon svgIcon="esc-icons:delete" class="!w-5 !h-5"></mat-icon>
                         Delete
                     </button>
@@ -184,7 +185,7 @@
                                 <div cdkDrag [cdkDragFreeDragPosition]="it.position || { x: 0, y: 0 }"
                                     class="!flex !items-center gap-2 px-5 py-2 cursor-move w-full"
                                     [ngClass]="{ 'col-span-full w-full': it.type === 'divider' }"
-                                    [dir]="it?.styles?.direction || 'ltr'">
+                                    [dir]="it?.styles?.default?.direction || 'ltr'">
 
                                     <!-- Content -->
                                     <div class="w-full" (click)="canvasState.selectItem(it, i)">
@@ -244,6 +245,9 @@
                     [item]="canvasState.editingItem()!"></app-field-styles>
             </form>
             <div class="w-full flex justify-end gap-2 !my-8">
+                <button (click)="canvasState.saveAsTemp()" class="flex items-center justify-center px-2 py-1 border border-primary-500 rounded-md cursor-pointer">
+                    <mat-icon svgIcon="esc-icons:save" class="!w-4 !h-4 !text-primary-500"></mat-icon>
+                </button>
                 <button (click)="canvasState.cancelEdit()"
                     class="px-3 py-1 !bg-text-50 rounded-md cursor-pointer">Cancel</button>
                 <button (click)="canvasState.saveEdit()"

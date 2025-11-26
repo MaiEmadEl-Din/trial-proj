@@ -25,7 +25,7 @@ export class RadioButtonSetup {
     this.form = this.fb.group({
       label: [item.label || 'Radio Button'],
       placeholder: [item.props?.['placeholder'] || 'Select an option'],
-      required: [item.props?.['required'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
 
       options: this.fb.array(
         (item.props?.['options'] && item.props['options'].length > 0
@@ -57,7 +57,7 @@ export class RadioButtonSetup {
       item.props = {
         ...item.props,
         placeholder: val.placeholder,
-        required: val.required,
+        isRequired: val.isRequired,
         options: val.options || [{ label: 'Option 1', isDefault: true }],
         queryConfig: val.queryConfig,
         apiConfig: val.apiConfig,

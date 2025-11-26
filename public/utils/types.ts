@@ -1,6 +1,4 @@
 import { Point } from '@angular/cdk/drag-drop';
-
-
 export interface FormItem {
     id?: string;
     type: string;
@@ -8,28 +6,30 @@ export interface FormItem {
     icon: string;
     isHovering?: boolean;
     position?: Point;
-
+    styleTabs?: ('default' | 'selected'| 'hover')[];
     props?: FormItemProps;
     styles?: FormItemStyles;
 }
 
 export interface FormItemProps {
     placeholder?: string;
-    required?: boolean;
+    isRequired?: boolean;
     content?: string;
     options?: any[];
+    minLength?: number;
     maxLength?: number;
 
     iconPreview?: string;
     iconFile?: File;
     iconPosition?: 'On Left' | 'On Right' | 'None';
 
+
     buttonText?: string;
     buttonType?: 'primary' | 'secondary' | 'outline';
-    type?: 'submit' | 'reset' | 'button';
+    buttonAction?: 'submit' | 'reset' | 'button';
 
     apiValidation?: string;
-    multiselect?: boolean;
+    isMultiselect?: boolean;
     defaultValue?: string | boolean;
 
     dateType?: 'datetime' | 'date' | 'time';
@@ -48,26 +48,16 @@ export interface FormItemProps {
 }
 
 export interface FormItemStyles {
-    backgroundColor?: string;
-    fontFamily?: string;
-    fontWeight?: string;
-    fontSize?: number | string;
-    color?: string;
-    rows?: number;
     enabled?: boolean;
-    direction?: 'ltr' | 'rtl';
 
-    borderWidth?: number | string;
-    borderRadius?: string;
-    borderColor?: string;
-
-    hover?: HoverStyle;
-    selected?: HoverStyle;
+    default?: Style;
+    hover?: Style;
+    selected?: Style;
 
     [key: string]: any;
 }
 
-export interface HoverStyle {
+export interface Style {
     backgroundColor?: string;
     color?: string;
     fontSize?: number | string;
@@ -79,3 +69,4 @@ export interface HoverStyle {
     direction?: 'ltr' | 'rtl';
     [key: string]: any;
 }
+

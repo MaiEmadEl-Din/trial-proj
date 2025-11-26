@@ -23,7 +23,7 @@ export class TextSetup {
       inputType: [item?.['type'] || 'text'],
       label: [item.label || ''],
       placeholder: [item.props?.['placeholder'] || ''],
-      required: [item.props?.['required'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
       apiValidation: [item.props?.['apiValidation'] || ''],
       maxLength: [item.props?.['maxLength'] || '50'],
     });
@@ -34,7 +34,7 @@ export class TextSetup {
         ...item.props,
         inputType: val.inputType,
         placeholder: val.placeholder,
-        required: val.required,
+        isRequired: val.isRequired,
         apiValidation: val.apiValidation,
         maxLength: val.maxLength,
       };      

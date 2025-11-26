@@ -1,13 +1,12 @@
 import { DOCUMENT, HostListener, inject, Injectable, signal } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { VersionHistoryService } from './version-history.service';
-import {FormItem} from '../../../../public/utils/types'
+import { FormItem } from '../../../../public/utils/types'
 @Injectable({ providedIn: 'root' })
 export class CanvasStateService {
 
     formData = signal<any>(null);
-
-
+    editSnapshot = signal<FormItem[] | null>(null);
 
     // Canvas items (what user builds)
     canvasItems = signal<FormItem[]>([]);
@@ -79,6 +78,7 @@ export class CanvasStateService {
         const newItem = structuredClone(event.previousContainer.data[event.previousIndex]);
         this.canvasItems.update(list => [...list, newItem]);
         const index = this.canvasItems().length - 1;
+        newItem.position = { x: 0, y: 0 };
         this.selectItem(newItem, index);
     }
 
@@ -87,38 +87,42 @@ export class CanvasStateService {
     // ─────────────────────────
     selectItem(item: FormItem, index: number) {
         this.saveStateSnapshot();
+
+        // Full canvas backup for cancel restore
+        this.editSnapshot.set(structuredClone(this.canvasItems()));
+
+        // Keep backup of the single item (optional, for display)
         this.tempItem.set(structuredClone(item));
+
+        // Keep live reference for real-time updates
         this.editingItem.set(item);
         this.editingIndex.set(index);
     }
+
 
     saveEdit() {
         this.clearEditor();
     }
 
     cancelEdit() {
-        const backup = this.tempItem();
-        if (!backup?.id) {
-            this.clearEditor();
-            return;
+        const snapshot = this.editSnapshot();
+        if (snapshot) {
+            this.canvasItems.set(structuredClone(snapshot));
         }
-
-        this.canvasItems.update(list => {
-            const idx = list.findIndex(x => x.id === backup.id);
-            if (idx !== -1) {
-                list[idx] = structuredClone(backup);
-            }
-            return [...list];
-        });
-
         this.clearEditor();
     }
 
+
+    saveAsTemp() {
+        console.log('editing Item', this.editingItem());
+        this.clearEditor();
+     }
 
     clearEditor() {
         this.editingItem.set(null);
         this.tempItem.set(null);
         this.editingIndex.set(null);
+        this.editSnapshot.set(null);
     }
 
     deleteItem(index: number) {
@@ -238,17 +242,9 @@ export class CanvasStateService {
         if (history.length === 0) return;
 
         const lastState = history[history.length - 1];
-
-        // Push current state to redo stack
         this.redoStack.update(stack => [...stack, structuredClone(this.canvasItems())]);
-
-        // Restore previous state
         this.canvasItems.set(structuredClone(lastState));
-
-        // Remove snapshot from undo stack
         this.undoStack.update(stack => stack.slice(0, -1));
-
-        // ✅ Important fix: stop restoring old temp edit backup
         this.clearEditor();
     }
 
@@ -257,29 +253,23 @@ export class CanvasStateService {
         if (redoHistory.length === 0) return;
 
         const restoredState = redoHistory[redoHistory.length - 1];
-
-        // Push current state to undo stack
         this.undoStack.update(stack => [...stack, structuredClone(this.canvasItems())]);
-
-        // Restore redo snapshot
         this.canvasItems.set(structuredClone(restoredState));
-
-        // Remove from redo stack
         this.redoStack.update(stack => stack.slice(0, -1));
-
-        // ✅ Also clear editor here
         this.clearEditor();
     }
 
     // ────────────────────────────────────────────────── save form ──────────────────────────────────────────────────────────────
     versionService = inject(VersionHistoryService);
     saveForm() {
+        console.log('canvasitems', this.canvasItems());
+        
         const payload = {
             fields: this.canvasItems().map((item, index) => ({
                 type: item.type,
                 label: item.label,
-                props: item.props,
-                styles: item.styles,
+                props: item.props ?? {},
+                styles: item.styles ?? {},
                 order: index,
             })),
             styles: this.formStyles()
@@ -296,13 +286,6 @@ export class CanvasStateService {
             ...history
         ]);
     }
-    // ───────────────────────────────────────────────────────── top right menu ─────────────────────────────────────────────────────────────────
-    topRightMenuOpen = signal(false);
-    toggleTopRightMenu(event: MouseEvent) {
-        event.stopPropagation();
-        this.topRightMenuOpen.set(!this.topRightMenuOpen());
-    }
-
     // ───────────────────────────────────────────────────────── Duplicate ─────────────────────────────────────────────────────────────────
     duplicateForm() {
         const currentForm = this.formData();

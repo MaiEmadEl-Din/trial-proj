@@ -1,5 +1,5 @@
-import { CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDropList, DragDropModule, moveItemInArray, Point } from '@angular/cdk/drag-drop';
-import { ChangeDetectorRef, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { CDK_DRAG_HANDLE, CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragMove, CdkDragPreview, CdkDropList, DragDropModule, moveItemInArray, Point } from '@angular/cdk/drag-drop';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FieldSetup } from '../setup/field-setup/field-setup';
@@ -22,7 +22,8 @@ import { VersionHistoryService } from '../../services/version-history.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DeleteDialog } from '../delete-dialog/delete-dialog';
 import { SaveTemplateDialog } from '../save-template-dialog/save-template-dialog';
-import {FormItem} from '../../../../../public/utils/types'
+import { FormItem } from '../../../../../public/utils/types'
+import { CdkObserveContent } from '@angular/cdk/observers';
 
 @Component({
   selector: 'app-canvas-component',
@@ -35,7 +36,8 @@ import {FormItem} from '../../../../../public/utils/types'
     BreadCrumbComponent,
     FieldRenderer,
     VersionHistoryPanel,
-    MatDialogModule
+    MatDialogModule,
+    CdkDrag, CdkDropList,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './canvas-component.html',
@@ -53,17 +55,17 @@ export class CanvasComponent {
   }
 
   paletteItems: FormItem[] = [
-    { type: 'text', label: 'Text Field', icon: 'esc-icons:text-input', props: { placeholder: 'Enter text' } },
-    { type: 'button', label: 'Button', icon: 'esc-icons:button' },
-    { type: 'textarea', label: 'Text Area', icon: 'esc-icons:text-area', props: { placeholder: 'Enter description' } },
-    { type: 'dropdown', label: 'Drop Down', icon: 'esc-icons:arrow-down' },
-    { type: 'multiple-choice', label: 'Multiple Choice', icon: 'esc-icons:square-check' },
-    { type: 'radio', label: 'Radio Button', icon: 'esc-icons:circle-check' },
-    { type: 'toggle', label: 'Toggle', icon: 'esc-icons:toggle' },
-    { type: 'datetime', label: 'Date & Time', icon: 'esc-icons:calendar-clock' },
-    { type: 'file', label: 'File Upload', icon: 'esc-icons:upload' },
-    { type: 'helper', label: 'Helper Text', icon: 'esc-icons:quote' },
-    { type: 'text-condition', label: 'Condition', icon: 'esc-icons:text-change' }
+    { type: 'text', label: 'Text Field', icon: 'esc-icons:text-input', styleTabs: ['default', 'hover'], props: { placeholder: 'Enter text' } },
+    { type: 'button', label: 'Button', icon: 'esc-icons:button', styleTabs: ['default', 'hover'] },
+    { type: 'textarea', label: 'Text Area', icon: 'esc-icons:text-area', styleTabs: ['default', 'hover'], props: { placeholder: 'Enter description' } },
+    { type: 'dropdown', label: 'Drop Down', icon: 'esc-icons:arrow-down', styleTabs: ['default', 'selected', 'hover'] },
+    { type: 'multiple-choice', label: 'Multiple Choice', icon: 'esc-icons:square-check', styleTabs: ['default', 'selected', 'hover'] },
+    { type: 'radio', label: 'Radio Button', icon: 'esc-icons:circle-check', styleTabs: ['default', 'selected', 'hover'] },
+    { type: 'toggle', label: 'Toggle', icon: 'esc-icons:toggle', styleTabs: ['default', 'hover'] },
+    { type: 'datetime', label: 'Date & Time', icon: 'esc-icons:calendar-clock', styleTabs: ['default', 'hover'] },
+    { type: 'file', label: 'File Upload', icon: 'esc-icons:upload', styleTabs: ['default', 'hover'] },
+    { type: 'helper', label: 'Helper Text', icon: 'esc-icons:quote', styleTabs: ['default', 'hover'] },
+    { type: 'text-condition', label: 'Condition', icon: 'esc-icons:text-change', styleTabs: ['default', 'hover'] }
   ];
 
 
@@ -107,4 +109,18 @@ export class CanvasComponent {
     });
   }
 
+
+  //  top right menu
+  topRightMenuOpen = signal(false);
+  toggleTopRightMenu(event: MouseEvent) {
+    event.stopPropagation();
+    this.topRightMenuOpen.set(!this.topRightMenuOpen());
+  }
+
+  @HostListener('document:click')
+  closeMenu() {
+    if (this.topRightMenuOpen()) {
+      this.topRightMenuOpen.set(false);
+    }
+  }
 }

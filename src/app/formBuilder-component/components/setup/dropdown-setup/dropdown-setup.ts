@@ -3,16 +3,20 @@ import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormItem } from '../../../../../../public/utils/types';
 import { FORM_ITEM } from '../../form-item.token';
+import { CdkDragDrop, CdkDropList, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-dropdown-setup',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, CdkDropList, MatIconModule],
   templateUrl: './dropdown-setup.html',
   styleUrl: './dropdown-setup.scss'
 })
 export class DropdownSetup {
   form: FormGroup;
   activeTab: 'Manual' | 'Query' | 'API' = 'Manual';
+  focusedIndex: number | null = null;
+
   @Output() itemUpdated = new EventEmitter<FormItem>();
 
   constructor(
@@ -22,8 +26,8 @@ export class DropdownSetup {
     this.form = this.fb.group({
       label: [item.label || 'Dropdown'],
       placeholder: [item.props?.['placeholder'] || 'Select an option'],
-      multiselect: [item.props?.['multiselect'] || false],
-      required: [item.props?.['required'] || false],
+      isMultiselect: [item.props?.['isMultiselect'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
 
       options: this.fb.array(
         (item.props?.['options'] && item.props['options'].length > 0
@@ -56,14 +60,12 @@ export class DropdownSetup {
       item.props = {
         ...item.props,
         placeholder: val.placeholder,
-        multiselect: val.multiselect,
+        isMultiselect: val.isMultiselect,
         required: val.required,
         options: val.options,
         queryConfig: val.queryConfig,
         apiConfig: val.apiConfig,
       };
-      console.log('amiu', this.form.value);
-
       this.itemUpdated.emit(item);
     });
   }
@@ -84,6 +86,13 @@ export class DropdownSetup {
     this.activeTab = tab;
   }
 
+  setDefault(index: number) {
+    this.options.controls.forEach((ctrl, i) => {
+      ctrl.get('isDefault')?.setValue(i === index);
+    });
+    this.focusedIndex = null;    
+  }
+
   addOption(label: string = '') {
     this.options.push(
       this.fb.group({
@@ -95,5 +104,20 @@ export class DropdownSetup {
 
   removeOption(index: number) {
     this.options.removeAt(index);
+    this.focusedIndex = null;
+  }
+
+  dropOption(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.options.controls, event.previousIndex, event.currentIndex);
+
+    const reordered = this.options.controls.map(c => c.value);
+    this.options.clear();
+
+    reordered.forEach(opt => {
+      this.options.push(this.fb.group({
+        label: [opt.label],
+      }));
+    });
+    this.focusedIndex = null;
   }
 }

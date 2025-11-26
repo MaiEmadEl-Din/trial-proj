@@ -1,9 +1,10 @@
-<aside class="fixed top-0 right-0 h-full w-72 bg-white shadow-2xl transition-transform duration-300 z-50 font-[cairo]"
-    [class.translate-x-full]="!versionHistory.isVersionHistoryOpen()">
-
+<aside 
+  class="fixed top-0 right-0 h-full w-72 bg-white shadow-2xl transition-transform duration-300 z-50 font-[cairo]"
+  [class.translate-x-full]="!versionHistory.isVersionHistoryOpen()"
+>
     <div class="p-4 border-b border-gray-300 flex justify-between items-center">
         <h2 class="text-lg font-semibold">Version History</h2>
-        <mat-icon svgIcon="mat_outline:close" class="cursor-pointer" (click)="versionHistory.closeVersionHistory()"></mat-icon>
+        <mat-icon svgIcon="mat_outline:close" class="cursor-pointer" (click)="close()"></mat-icon>
     </div>
 
     <!-- Aside content -->

@@ -53,7 +53,6 @@ export class CreateNewFormComponent {
     }
 
     const formData = this.form.value;
-    console.log('maioo', formData);
     this.dialogRef.close();
     
     this.router.navigate(['/form-builder/add'], {

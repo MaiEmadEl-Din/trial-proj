@@ -1,23 +1,16 @@
 <!-- ag-actions-renderer.component.html -->
 <div class="flex items-center gap-2 action-wrapper">
-  <ng-container *ngIf="actions.includes('view')">
+  <ng-container *ngIf="actions.includes('duplicate')">
     <div class="action-icon w-[35px] h-[35px] flex justify-center items-center cursor-pointer"
       (click)="onActionClick('view')">
-      <mat-icon svgIcon="mat_outline:visibility" class="!text-primary-500 !w-5 !h-5"></mat-icon>
+      <mat-icon svgIcon="esc-icons:duplicate" class="!text-black !w-5 !h-5"></mat-icon>
     </div>
   </ng-container>
 
   <ng-container *ngIf="actions.includes('edit')">
     <div class="action-icon w-[35px] h-[35px] flex justify-center items-center cursor-pointer"
       (click)="onActionClick('edit')">
-      <mat-icon svgIcon="feather:edit-3" class="!text-primary-500 !w-5 !h-5"></mat-icon>
-    </div>
-  </ng-container>
-
-  <ng-container *ngIf="actions.includes('copy')">
-    <div class="action-icon w-[35px] h-[35px] flex justify-center items-center cursor-pointer"
-      (click)="onActionClick('copy')">
-      <mat-icon svgIcon="esc-icons:copy" class="!text-primary-500 !w-5 !h-5"></mat-icon>
+      <mat-icon svgIcon="esc-icons:edit" class="!text-primary-500 !w-5 !h-5"></mat-icon>
     </div>
   </ng-container>
 

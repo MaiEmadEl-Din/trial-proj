@@ -35,7 +35,7 @@ export class ConditionsAcceptanceSetup {
             })
         )
       ),
-      required: new FormControl(item.props?.required || false),
+      isRequired: new FormControl(item.props?.isRequired || false),
     });
 
     // Watch for changes

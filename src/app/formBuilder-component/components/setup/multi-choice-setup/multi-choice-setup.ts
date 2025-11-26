@@ -3,12 +3,17 @@ import { FormGroup, FormBuilder, Validators, FormArray, ReactiveFormsModule } fr
 import { FormItem } from '../../../../../../public/utils/types';
 import { FORM_ITEM } from '../../form-item.token';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { CdkDragDrop, CdkDropList, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-multi-choice-setup',
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule,
+    DragDropModule,
+    CdkDropList
   ],
   templateUrl: './multi-choice-setup.html',
   styleUrl: './multi-choice-setup.scss'
@@ -16,6 +21,7 @@ import { CommonModule } from '@angular/common';
 export class MultiChoiceSetup {
   form: FormGroup;
   activeTab: 'Manual' | 'Query' | 'API' = 'Manual';
+  focusedIndex: number | null = null;
   @Output() itemUpdated = new EventEmitter<FormItem>();
 
   constructor(
@@ -25,7 +31,7 @@ export class MultiChoiceSetup {
     this.form = this.fb.group({
       label: [item.label || 'MultiChoice'],
       placeholder: [item.props?.['placeholder'] || 'Select options'],
-      required: [item.props?.['required'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
 
       options: this.fb.array(
         (item.props?.['options'] && item.props['options'].length > 0
@@ -57,7 +63,7 @@ export class MultiChoiceSetup {
       item.props = {
         ...item.props,
         placeholder: val.placeholder,
-        required: val.required,
+        isRequired: val.isRequired,
         options: val.options || ['Option 1'],
         queryConfig: val.queryConfig,
         apiConfig: val.apiConfig,
@@ -91,7 +97,28 @@ export class MultiChoiceSetup {
     );
   }
 
+  setDefault(index: number) {
+    this.options.controls.forEach((ctrl, i) => {
+      ctrl.get('isDefault')?.setValue(i === index);
+    });
+    this.focusedIndex = null;
+  }
+
   removeOption(index: number) {
     this.options.removeAt(index);
+  }
+
+  dropOption(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.options.controls, event.previousIndex, event.currentIndex);
+
+    const reordered = this.options.controls.map(c => c.value);
+    this.options.clear();
+
+    reordered.forEach(opt => {
+      this.options.push(this.fb.group({
+        label: [opt.label],
+      }));
+    });
+    this.focusedIndex = null;
   }
 }

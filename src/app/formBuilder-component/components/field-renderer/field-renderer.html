@@ -20,8 +20,8 @@
     <input type="text" [ngStyle]="mergeStyles(it)" [maxLength]="it.props?.maxLength || 50"
         (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null,it)"
         class="mt-1 w-full p-3 border border-gray-300 rounded-md text-gray-700"
-        [placeholder]="it.props?.placeholder || 'Enter text...'" [disabled]="!it.styles?.enabled"
-        [required]="it.props?.required" />
+        [placeholder]="it.props?.placeholder || 'Enter text...'" [disabled]="!it.styles?.default?.['enabled']"
+        [required]="it.props?.isRequired" />
 </div>
 }
 
@@ -31,10 +31,11 @@
         {{ it.label || 'Text Area' }}
     </label>
     <div class="relative">
-        <textarea [ngStyle]="it.styles" [maxLength]="it.props?.maxLength || 10"
-            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700" [rows]="it.styles?.rows || 3"
-            [placeholder]="it.props?.placeholder" [required]="it.props?.required ?? false"
-            [disabled]="!it.styles?.enabled"></textarea>
+        <textarea [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null,it)"
+            [maxLength]="it.props?.maxLength || 10"
+            class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md text-gray-700" rows="5"
+            [placeholder]="it.props?.placeholder" [required]="it.props?.isRequired ?? false"
+            [disabled]="!it.styles?.default?.['enabled']"></textarea>
 
         <div class="absolute -bottom-5 right-2 text-sm text-gray-400">
             {{ it.props?.['maxLength'] || 10 }}
@@ -45,8 +46,9 @@
 
 @case ('button') {
 <div class="flex items-center justify-start">
-    <button [type]="it.props?.type?.toLowerCase() || 'button'" [disabled]="it.styles?.enabled === false"
-        [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null, it)" [ngClass]="[
+    <button [type]="it.props?.buttonAction?.toLowerCase() || 'button'"
+        [disabled]="it.styles?.default?.['enabled'] === false" [ngStyle]="mergeStyles(it)"
+        (mouseenter)="applyHover(null, it)" (mouseleave)="removeHover(null, it)" [ngClass]="[
                 getButtonType(it.props?.buttonType ?? 'primary'),
                 'rounded-md px-4 py-2 font-medium flex items-center justify-center gap-2'
               ]">
@@ -74,12 +76,12 @@
         subscriptSizing="dynamic" appearance="outline" class="w-full border border-gray-300 rounded-md">
 
         <!-- Dropdown trigger (input) uses hover + default only -->
-        <mat-select [required]="it.props?.required" [disabled]="it.styles?.enabled === false"
+        <mat-select [required]="it.props?.isRequired" [disabled]="it.styles?.default?.['enabled'] === false"
             [placeholder]="it.props?.placeholder || 'Select an option'"
             (selectionChange)="onSelectionChange($event, $event.value, it, 'dropdown')">
 
             <!-- Each option checks if it's selected and will apply selected styles -->
-            <mat-option *ngFor="let option of it.props?.options" [value]="option.label"
+            <mat-option *ngFor="let option of it.props?.options ?? [{ label: 'Option 1' }]" [value]="option.label"
                 [ngStyle]="mergeStyles(it, option)" (mouseenter)="applyHover(option)"
                 (mouseleave)="removeHover(option)">
                 {{ option.label }}
@@ -99,9 +101,9 @@
     </label>
 
     <div class="mt-2 space-y-1">
-        <mat-checkbox *ngFor="let opt of it.props?.options || [{ label: 'Option 1' }]" [ngStyle]="mergeStyles(it, opt)"
+        <mat-checkbox *ngFor="let opt of it.props?.options?? [{ label: 'Option 1' }]" [ngStyle]="mergeStyles(it, opt)"
             (change)="onSelectionChange($event, opt.label, it, 'checkbox')" (mouseenter)="applyHover(opt)"
-            (mouseleave)="removeHover(opt)" [disabled]="it.styles?.enabled === false" class="w-full">
+            (mouseleave)="removeHover(opt)" [disabled]="it.styles?.default?.['enabled'] === false" class="w-full">
             {{ opt.label }}
         </mat-checkbox>
     </div>
@@ -112,10 +114,10 @@
 <div>
     <label class="block text-sm text-gray-700 mb-1">
         {{ it.label || 'Radio Buttons' }}
-        <span *ngIf="it.props?.required" class="text-red-500">*</span>
+        <span *ngIf="it.props?.isRequired" class="text-red-500">*</span>
     </label>
 
-    <mat-radio-group class="flex flex-col gap-2" [disabled]="it.styles?.enabled === false">
+    <mat-radio-group class="flex flex-col gap-2" [disabled]="it.styles?.default?.['enabled'] === false">
 
         <mat-radio-button *ngFor="let opt of it.props?.options || [{ label: 'Option 1' }]" [value]="opt.label"
             [checked]="opt.isDefault === true" (change)="onSelectionChange($event, opt.label, it, 'radio')"
@@ -129,15 +131,15 @@
 
 @case ('toggle') {
 <div class="flex items-center gap-3 p-2" [ngStyle]="{
-    borderRadius: it.styles?.borderRadius || '9999px',
-    border: (it.styles?.borderWidth || 0) + ' solid ' + (it.styles?.borderColor || '#000')
+    borderRadius: it.styles?.default?.borderRadius || '9999px',
+    border: (it.styles?.default?.borderWidth || 0) + ' solid ' + (it.styles?.default?.borderColor || '#000')
  }">
 
     <label class="inline-flex items-center cursor-pointer" (mouseenter)="applyHover(null,it)"
         (mouseleave)="removeHover(null,it)">
 
         <input type="checkbox" class="sr-only peer" [checked]="it.props?.defaultValue ?? true"
-            [disabled]="it.styles?.enabled === false" (change)="updateToggle(it, $event.target.checked)" />
+            [disabled]="it.styles?.default?.['enabled'] === false" (change)="updateToggle(it, $event.target.checked)" />
 
         <div class="relative w-11 h-6 rounded-full
                 after:content-[''] after:absolute after:top-[2px] after:start-[2px]
@@ -145,16 +147,16 @@
                 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full
                 peer-checked:after:border-gray-500" [ngStyle]="{
         backgroundColor: (it.props?.defaultValue ?? true)
-          ? (it.styles?.['isHovering'] ? it.styles?.hover?.backgroundColor || it.styles?.backgroundColor || '#0EA5E9' : it.styles?.backgroundColor || '#0EA5E9')
+          ? (it['isHovering'] ? it.styles?.hover?.backgroundColor || it.styles?.default?.backgroundColor || '#0EA5E9' : it.styles?.default?.backgroundColor || '#0EA5E9')
           : '#E0E0E0'
       }">
         </div>
 
         <span class="ms-3 text-sm font-medium" [ngStyle]="{
-        color: it.styles?.['isHovering'] ? it.styles?.hover?.color || it.styles?.color || '#000' : it.styles?.color || '#000',
-        fontFamily: it.styles?.fontFamily || 'cairo',
-        fontSize: it.styles?.fontSize || 14,
-        fontWeight: it.styles?.fontWeight || '400'
+        color: it['isHovering'] ? it.styles?.hover?.color || it.styles?.default?.color || '#000' : it.styles?.default?.color || '#000',
+        fontFamily: it.styles?.default?.fontFamily || 'cairo',
+        fontSize: it.styles?.default?.fontSize || 14,
+        fontWeight: it.styles?.default?.fontWeight || '400'
       }">
             {{ it.label || 'Toggle me' }}
         </span>
@@ -175,7 +177,7 @@
     @case ('specific-specific') {
     <div class="space-y-2">
         <label class="block"
-            [ngStyle]="{ color: it.styles?.color, 'font-weight': it.styles?.fontWeight, 'font-family': it.styles?.fontFamily, 'font-size': it.styles?.fontSize }">
+            [ngStyle]="{ color: it.styles?.default?.color, 'font-weight': it.styles?.default?.fontWeight, 'font-family': it.styles?.default?.fontFamily, 'font-size': it.styles?.default?.fontSize }">
             {{ it.label || 'Select date & time' }}
         </label>
 
@@ -183,13 +185,13 @@
             <nz-date-picker class="flex-1" [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)"
                 (mouseleave)="removeHover(null, it)"
                 [nzFormat]="it.props?.dateFormat === 'YYYY-MM-DD' ? 'yyyy-MM-dd' : it.props?.dateFormat === 'DD-MM-YYYY' ? 'dd-MM-yyyy' : 'MM-dd-yyyy'"
-                [nzDisabled]="it.styles?.enabled === false">
+                [nzDisabled]="it.styles?.default?.['enabled'] === false">
             </nz-date-picker>
 
             <nz-time-picker class="flex-1" [ngStyle]="mergeStyles(it)" (mouseenter)="applyHover(null, it)"
                 (mouseleave)="removeHover(null, it)" [nzUse12Hours]="it.props?.timeFormat === '12h'"
                 [nzFormat]="it.props?.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'"
-                [nzDisabled]="it.styles?.enabled === false">
+                [nzDisabled]="it.styles?.default?.['enabled'] === false">
             </nz-time-picker>
         </div>
     </div>
@@ -336,7 +338,7 @@
 <div class="space-y-2">
     <label class="block text-gray-700 font-medium">
         {{ it.label || 'Upload Files' }}
-        <span *ngIf="it.props?.required" class="text-red-500">*</span>
+        <span *ngIf="it.props?.isRequired" class="text-red-500">*</span>
     </label>
 
     <div class="flex items-center gap-2">
@@ -344,7 +346,7 @@
             (mouseleave)="removeHover(null, it)"
             class="flex-1 border border-gray-300 rounded-md p-2 bg-slate-50 text-gray-700 cursor-pointer disabled:cursor-not-allowed"
             [attr.multiple]="it.props?.maxFiles! > 1 ? '' : null" [attr.accept]="it.props?.fileTypes"
-            [disabled]="it.styles?.enabled === false" (change)="handleFileSelection($event, it)" />
+            [disabled]="it.styles?.default?.['enabled'] === false" (change)="handleFileSelection($event, it)" />
     </div>
 
     <p *ngIf="it.props?.filesExceedLimitMessage" class="text-red-600 text-xs mt-1">

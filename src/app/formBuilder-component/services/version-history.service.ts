@@ -25,7 +25,6 @@ export class VersionHistoryService {
                         "color": "#ffffff",
                         "fontWeight": "700",
                         "fontFamily": "cursive",
-                        "isHovering": false
                     },
                     "order": 0
                 }
@@ -70,7 +69,7 @@ export class VersionHistoryService {
         }
     ]);
 
-    restoreVersion(index: number,canvasService: CanvasStateService) {
+    restoreVersion(index: number, canvasService: CanvasStateService) {
         const version = this.versionHistory()[index];
         if (!version) return;
 
@@ -87,8 +86,12 @@ export class VersionHistoryService {
 
 
     isVersionHistoryOpen = signal(false);
-    openVersionHistory() { this.isVersionHistoryOpen.set(true); }
-    closeVersionHistory() { this.isVersionHistoryOpen.set(false); }
+    openVersionHistory() {
+        this.isVersionHistoryOpen.set(true);
+    }
+    closeVersionHistory() {
+        this.isVersionHistoryOpen.set(false);
+    }
     toggleVersionHistory() {
         this.isVersionHistoryOpen.update(v => !v);
     }

@@ -1,17 +1,6 @@
 import { Component, ComponentRef, EventEmitter, Injector, Input, Output, SimpleChanges, Type, ViewChild, ViewContainerRef } from '@angular/core';
-import { FORM_ITEM } from '../../form-item.token';
 import { TextStyles } from '../text-styles/text-styles';
 import { FormItem } from '../../../../../../public/utils/types';
-import { DropdownStyles } from '../dropdown-styles/dropdown-styles';
-import { TextareaStyles } from '../textarea-styles/textarea-styles';
-import { ButtonStyles } from '../button-styles/button-styles';
-import { MultiChoiceStyles } from '../multi-choice-styles/multi-choice-styles';
-import { RadioButtonStyles } from '../radio-button-styles/radio-button-styles';
-import { ToggleStyles } from '../toggle-styles/toggle-styles';
-import { HelperTextStyles } from '../helper-text-styles/helper-text-styles';
-import { ConditionsAcceptanceStyles } from '../conditions-acceptance-styles/conditions-acceptance-styles';
-import { DateTimeStyles } from '../date-time-styles/date-time-styles';
-import { FileStyles } from '../file-styles/file-styles';
 
 @Component({
   selector: 'app-field-styles',
@@ -29,20 +18,19 @@ export class FieldStyles {
   component!: Type<any>;
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('🔄 FieldStyles ngOnChanges triggered with item:', this.item);
     if (changes['item'] && this.item) {
       const map: Record<string, Type<any>> = {
         text: TextStyles,
-        dropdown: DropdownStyles,
-        textarea: TextareaStyles,
-        button: ButtonStyles,
-        'multiple-choice': MultiChoiceStyles,
-        radio: RadioButtonStyles,
-        toggle: ToggleStyles,
-        helper: HelperTextStyles,
-        "text-condition": ConditionsAcceptanceStyles,
-        datetime: DateTimeStyles,
-        file: FileStyles
+        dropdown: TextStyles,
+        textarea: TextStyles,
+        button: TextStyles,
+        'multiple-choice': TextStyles,
+        radio: TextStyles,
+        toggle: TextStyles,
+        helper: TextStyles,
+        "text-condition": TextStyles,
+        datetime: TextStyles,
+        file: TextStyles
       };
 
       this.component = map[this.item.type];
@@ -52,7 +40,6 @@ export class FieldStyles {
 
 
   private loadDynamicComponent() {
-    console.log('🧱 loadDynamicComponent called');
     if (!this.dynamicContainer || !this.component) return;
 
     this.dynamicContainer.clear();

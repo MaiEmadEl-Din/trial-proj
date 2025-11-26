@@ -22,7 +22,12 @@ import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 export class FormsList {
   router = inject(Router);
   // table
-  rowData: any[] = [];
+  rowData: any[] = [
+    {
+      formName: 'Customer Feedback',
+      formId: 'CFB-001',
+      status: 'Active',}
+  ];
   advancedPaginatedService = inject(gridAdvancedPaginationService);
   searchTerm!: FormControl<string | null>;
   pageSize = 5;
@@ -65,7 +70,7 @@ export class FormsList {
       cellRenderer: AgActionsRendererComponent,
       cellRendererParams: (params: any) => {
         return {
-          actions: ['view', 'copy', 'delete'],
+          actions: ['duplicate', 'edit', 'delete'],
           onActionClick: this.onActionClick.bind(this),
         };
       },
@@ -126,9 +131,13 @@ export class FormsList {
     });
   }
 
+
   onActionClick(action: string, params: any): void {
-    if (action === 'view') {
-      this.router.navigate(['/basic-data/edit/', params.id]);
+    if (action === 'duplicate') {
+    }
+    else if (action === 'edit') {
+    }
+    else if (action === 'delete') {
     }
   }
 

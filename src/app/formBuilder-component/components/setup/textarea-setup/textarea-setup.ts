@@ -24,9 +24,9 @@ export class TextareaSetup {
     this.form = this.fb.group({
       label: [item.label || ''],
       placeholder: [item.props?.['placeholder'] || ''],
-      required: [item.props?.['required'] || false],
+      isRequired: [item.props?.['isRequired'] || false],
       apiValidation: [item.props?.['apiValidation'] || ''],
-      maxLength: [item.props?.['maxLength'] || '100'],
+      maxLength: [item.props?.['maxLength'] || '10'],
     });
 
     this.form.valueChanges.subscribe(val => {
@@ -34,8 +34,7 @@ export class TextareaSetup {
       item.props = {
         ...item.props,
         placeholder: val.placeholder,
-        rows: val.rows,
-        required: val.required,
+        isRequired: val.isRequired,
         apiValidation: val.apiValidation,
         maxLength: val.maxLength,
       };
